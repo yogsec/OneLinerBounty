@@ -1754,5 +1754,119 @@ Search for Open API Documentation (Swagger)
 ```bash
 cat subdomains.txt | httpx -silent -path-list <(echo -e '/swagger-ui.html\n/api-docs\n/openapi.json') -mc 200 -o open_api_docs.txt
 ```
+Here’s the converted content:
 
-Let me know if you need further adjustments or additions!
+Find Exposed .env Files (Sensitive Configs)
+```bash
+cat subdomains.txt | httpx -silent -path /.env -mc 200 -o exposed_env.txt
+```
+
+Detect Exposed MySQL Dumps
+```bash
+cat subdomains.txt | httpx -silent -path /db.sql -mc 200 -o mysql_dumps.txt
+```
+
+Check for Misconfigured CORS (Allow-All)
+```bash
+cat urls.txt | httpx -silent -H 'Origin: https://evil.com' -fr 'Access-Control-Allow-Origin: https://evil.com' -o cors_misconfig.txt
+```
+
+Find Exposed Adminer (DB Management Interface)
+```bash
+cat subdomains.txt | httpx -silent -path /adminer.php -mc 200 -o exposed_adminer.txt
+```
+
+Search for Exposed Backup Files (.bak)
+```bash
+cat subdomains.txt | httpx -silent -path-list <(echo -e '/index.php.bak\n/config.bak\n/db.bak') -mc 200 -o backup_files.txt
+```
+
+Search for Test/Dev Subdomains (Staging)
+```bash
+subfinder -d target.com | grep -Ei 'dev|test|staging|qa' > staging_subdomains.txt
+```
+
+Detect Open RDP Servers (Network Exposures)
+```bash
+cat ips.txt | naabu -p 3389 -silent -o open_rdp.txt
+```
+
+Detect AWS S3 Buckets via Subdomains
+```bash
+cat subdomains.txt | grep -E 's3.amazonaws.com|amazonaws' > s3_buckets.txt
+```
+
+Identify Weak Security Headers (Lack of CSP, HSTS)
+```bash
+cat urls.txt | httpx -silent -hx | grep -v -E 'Strict-Transport-Security|Content-Security-Policy' > weak_headers.txt
+```
+
+Check for Exposed Docker API
+```bash
+cat ips.txt | naabu -p 2375 -silent -o open_docker_api.txt
+```
+
+Find Open Grafana Dashboards
+```bash
+cat subdomains.txt | httpx -silent -path /login -mc 200 -fr 'Grafana' -o open_grafana.txt
+```
+
+Check for Public PHP Info Pages (Leaking Config)
+```bash
+cat urls.txt | httpx -silent -path /phpinfo.php -mc 200 -o phpinfo_exposed.txt
+```
+
+Find Exposed Laravel Debug Panels
+```bash
+cat subdomains.txt | httpx -silent -path /_debugbar -mc 200 -o laravel_debug.txt
+```
+
+Look for Open ElasticSearch (Data Exposure)
+```bash
+cat ips.txt | naabu -p 9200 -silent -o open_elasticsearch.txt
+```
+
+Identify Directory Traversal (Simple Payload)
+```bash
+cat urls.txt | qsreplace '../../../../../etc/passwd' | httpx -silent -fr 'root:x:' -o directory_traversal.txt
+```
+
+Find Open Kibana Dashboards (Sensitive Logs)
+```bash
+cat subdomains.txt | httpx -silent -path /app/kibana -mc 200 -o open_kibana.txt
+```
+
+Detect Exposed Wordpress Debug Logs
+```bash
+cat subdomains.txt | httpx -silent -path /wp-content/debug.log -mc 200 -o wp_debug_logs.txt
+```
+
+Find Exposed FTP Servers (Anonymous Access)
+```bash
+cat ips.txt | naabu -p 21 -silent -o open_ftp.txt
+```
+
+Detect Open MongoDB Databases (No Auth)
+```bash
+cat ips.txt | naabu -p 27017 -silent -o open_mongo.txt
+```
+
+Identify Open PhpMyAdmin Panels
+```bash
+cat subdomains.txt | httpx -silent -path /phpmyadmin -mc 200 -o open_phpmyadmin.txt
+```
+
+Search for Backup Files with Extensions (.bak, .old)
+```bash
+cat subdomains.txt | gauplus | grep -E '\.bak|\.old|\.backup' > backup_files_found.txt
+```
+
+Check for Open Directories (Index of Listings)
+```bash
+cat subdomains.txt | httpx -silent -mc 200 -fr 'Index of /' -o open_directories.txt
+```
+
+Find Public GraphQL Endpoints (API Leaks)
+```bash
+cat subdomains.txt | httpx -silent -path /graphql -mc 200 -o open_graphql.txt
+```
