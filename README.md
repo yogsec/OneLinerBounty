@@ -1979,3 +1979,115 @@ Search for Backup Database Dumps (SQL, SQLite)
 ```bash
 cat subdomains.txt | httpx -silent -path-list <(echo -e '/db.sql\n/database.sql\n/dump.sql\n/backup.db') -mc 200 -o db_dumps.txt
 ```
+Here’s the converted content:
+
+Detect Exposed SSL Certificates (pem)
+```bash
+cat subdomains.txt | httpx -silent -path /ssl/cert.pem -mc 200 -o exposed_ssl.txt
+```
+
+Find Open Configuration.php Files (Joomla)
+```bash
+cat subdomains.txt | httpx -silent -path /configuration.php -mc 200 -o joomla_config_exposed.txt
+```
+
+Hunt for Open Jenkins Dashboards
+```bash
+cat subdomains.txt | httpx -silent -path /jenkins -mc 200 -o open_jenkins.txt
+```
+
+Detect Exposed Magento Admin Panels
+```bash
+cat subdomains.txt | httpx -silent -path /admin -mc 200 -o magento_admin.txt
+```
+
+Check for Exposed API Documentation (Swagger UI)
+```bash
+cat subdomains.txt | httpx -silent -path /swagger-ui.html -mc 200 -o swagger_exposed.txt
+```
+
+Detect GitLab or GitHub Enterprise Instances
+```bash
+cat subdomains.txt | httpx -silent -path /users/sign_in -mc 200 -o gitlab_or_ghe.txt
+```
+
+Find Misconfigured CORS (Wildcard)
+```bash
+cat urls.txt | httpx -silent -H "Origin: https://evil.com" -fr 'Access-Control-Allow-Origin: https://evil.com' -o cors_misconfig.txt
+```
+
+Scan for Server Status Pages (Apache/Nginx)
+```bash
+cat subdomains.txt | httpx -silent -path-list <(echo -e '/server-status\n/nginx_status') -mc 200 -o server_status_exposed.txt
+```
+
+Identify Exposed Debug Pages (PHP Info)
+```bash
+cat subdomains.txt | httpx -silent -path /phpinfo.php -mc 200 -o phpinfo_exposed.txt
+```
+
+Detect Open Redis Stats Pages (Unprotected UI)
+```bash
+cat subdomains.txt | httpx -silent -path /redis -mc 200 -o redis_ui_exposed.txt
+```
+
+Scan for Exposed Kubernetes Dashboard
+```bash
+cat subdomains.txt | httpx -silent -path /api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/ -mc 200 -o k8s_dashboard_exposed.txt
+```
+
+Look for GraphQL Playground
+```bash
+cat subdomains.txt | httpx -silent -path /playground -mc 200 -o graphql_playground_exposed.txt
+```
+
+Find Exposed OpenAPI Spec Files (openapi.json)
+```bash
+cat subdomains.txt | httpx -silent -path /openapi.json -mc 200 -o openapi_exposed.txt
+```
+
+Scan for Exposed GCP Metadata Servers
+```bash
+cat ips.txt | naabu -p 80,443 -silent | httpx -path /computeMetadata/v1/ -H 'Metadata-Flavor: Google' -mc 200 -o gcp_metadata_exposed.txt
+```
+
+Find Exposed Jenkins Console Logs
+```bash
+cat subdomains.txt | httpx -silent -path /console -mc 200 -o jenkins_console_logs.txt
+```
+
+Check for Open Jira Dashboards (Exposed Tickets)
+```bash
+cat subdomains.txt | httpx -silent -path /secure/Dashboard.jspa -mc 200 -o jira_exposed.txt
+```
+
+Detect Exposed Env Variables via /env (SpringBoot)
+```bash
+cat subdomains.txt | httpx -silent -path /env -mc 200 -o springboot_env_exposed.txt
+```
+
+Find Misconfigured GitHub Actions Workflows (YAML)
+```bash
+cat subdomains.txt | gauplus | grep -Ei '.github/workflows/.*\.yml' > github_workflows_exposed.txt
+```
+
+Scan for Default Admin Credentials on Login Pages
+```bash
+cat urls.txt | nuclei -t cves/ -tags 'default-login' -o default_creds.txt
+```
+
+Check for Misconfigured Prometheus Servers
+```bash
+cat subdomains.txt | httpx -silent -path /graph -mc 200 -o prometheus_exposed.txt
+```
+
+Find Exposed Backup Files (ZIP, TAR, SQL)
+```bash
+cat subdomains.txt | httpx -silent -path-list <(echo -e '/backup.zip\n/backup.tar.gz\n/dump.sql') -mc 200 -o exposed_backups.txt
+```
+
+Detect Exposed Open Directory Listings
+```bash
+cat subdomains.txt | httpx -silent -fr '<title>Index of /' -o open_directories.txt
+```
+
