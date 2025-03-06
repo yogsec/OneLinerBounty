@@ -2091,3 +2091,109 @@ Detect Exposed Open Directory Listings
 cat subdomains.txt | httpx -silent -fr '<title>Index of /' -o open_directories.txt
 ```
 
+Here is the converted content:
+
+Find Open Jenkins Script Console (RCE Point)
+```bash
+cat subdomains.txt | httpx -silent -path /script -mc 200 -o jenkins_script_console.txt
+```
+
+Scan for Exposed Kubernetes Kubelet APIs (Unauth Access)
+```bash
+cat ips.txt | httpx -silent -path /pods -mc 200 -o kubelet_exposed.txt
+```
+
+Look for Apache Struts Vulnerable Endpoints
+```bash
+cat subdomains.txt | httpx -silent -path /struts2-showcase/index.action -mc 200 -o struts_vuln.txt
+```
+
+Identify Open Tomcat Manager Consoles
+```bash
+cat subdomains.txt | httpx -silent -path /manager/html -mc 200 -o tomcat_manager_open.txt
+```
+
+Detect CVE-2021-3129 (Laravel Debug Mode RCE)
+```bash
+cat subdomains.txt | httpx -silent -path /_ignition/execute-solution -mc 200 -o laravel_rce.txt
+```
+
+Find Exposed Config.json / settings.json
+```bash
+cat subdomains.txt | httpx -silent -path-list <(echo -e '/config.json\n/settings.json') -mc 200 -o exposed_json_configs.txt
+```
+
+Check for Outdated WordPress (Version Leak)
+```bash
+cat subdomains.txt | httpx -silent -path /readme.html -mc 200 -o wordpress_version.txt
+```
+
+Find Exposed Log Files (.log)
+```bash
+cat subdomains.txt | httpx -silent -path /error.log -mc 200 -o exposed_logs.txt
+```
+
+Detect Misconfigured GraphQL Endpoints (Introspection Enabled)
+```bash
+cat subdomains.txt | httpx -silent -path /graphql -H 'Content-Type: application/json' -d '{"query":"query IntrospectionQuery {__schema { queryType { name }}}"}' -o graphql_introspection_enabled.txt
+```
+
+Scan for Exposed Config.php in WordPress / Joomla
+```bash
+cat subdomains.txt | httpx -silent -path /wp-config.php -mc 200 -o wp_config_exposed.txt
+```
+
+Detect Open API Endpoints (via common paths)
+```bash
+cat subdomains.txt | httpx -silent -path-list <(echo -e '/api/v1/\n/api/\n/api/v2/\n/app_dev.php/api/') -mc 200 -o open_api_endpoints.txt
+```
+
+Check for Exposed GitHub Personal Access Tokens (PATs)
+```bash
+cat subdomains.txt | gauplus | grep -E 'token=[a-z0-9]+' > github_tokens_leak.txt
+```
+
+Find Misconfigured AWS Buckets (S3)
+```bash
+cat subdomains.txt | httpx -silent -path / -mc 200 -o s3_buckets_exposed.txt
+```
+
+Scan for Exposed Laravel Log Files
+```bash
+cat subdomains.txt | httpx -silent -path /storage/logs/laravel.log -mc 200 -o laravel_log_exposed.txt
+```
+
+Check for Outdated Apache Version via Server Header
+```bash
+cat subdomains.txt | httpx -silent -fr 'Server: Apache/2.4' -o outdated_apache.txt
+```
+
+Detect PHPMyAdmin Open Login Pages
+```bash
+cat subdomains.txt | httpx -silent -path /phpmyadmin -mc 200 -o phpmyadmin_open.txt
+```
+
+Look for Unprotected Kibana Instances
+```bash
+cat subdomains.txt | httpx -silent -path /app/kibana -mc 200 -o kibana_open.txt
+```
+
+Scan for Public Grafana Dashboards
+```bash
+cat subdomains.txt | httpx -silent -path /login -mc 200 -o grafana_login_open.txt
+```
+
+Search for Common Backup Extensions (bak, old, save)
+```bash
+cat subdomains.txt | httpx -silent -path-list <(echo -e '/index.php.bak\n/config.old\n/config.save') -mc 200 -o backup_files_exposed.txt
+```
+
+Find Misconfigured ElasticSearch Instances (Public Index)
+```bash
+cat ips.txt | httpx -silent -path /_cat/indices?v -mc 200 -o elasticsearch_exposed.txt
+```
+
+Look for Exposed Jenkins Build Logs
+```bash
+cat subdomains.txt | httpx -silent -path /job/test/lastBuild/consoleText -mc 200 -o jenkins_build_logs.txt
+```
