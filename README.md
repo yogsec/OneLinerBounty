@@ -2298,3 +2298,115 @@ Find Exposed Debug Toolbar (Django Debug)
 ```bash
 cat subdomains.txt | httpx -silent -path /__debug__/ -mc 200 -o django_debug_toolbar.txt
 ```
+
+Here is the converted content:
+
+Detect Open Directories with Readable Files
+```bash
+cat subdomains.txt | httpx -silent -fr '<title>Index of /' -o open_directory_listing.txt
+```
+
+Identify Exposed Proxy Logs (Squid / HAProxy)
+```bash
+cat subdomains.txt | httpx -silent -path /var/log/squid/access.log -mc 200 -o proxy_logs_exposed.txt
+```
+
+Check for Public WebSockets Endpoints (Leaky API)
+```bash
+cat subdomains.txt | httpx -silent -path /socket.io -mc 200 -o websocket_exposed.txt
+```
+
+Find Public GraphQL Consoles (Interactive API)
+```bash
+cat subdomains.txt | httpx -silent -path /graphiql -mc 200 -o graphiql_open.txt
+```
+
+Scan for Open Hadoop Resource Manager
+```bash
+cat subdomains.txt | httpx -silent -path /ws/v1/cluster/info -mc 200 -o hadoop_exposed.txt
+```
+
+Detect Exposed PHPInfo Pages (Info Disclosure)
+```bash
+cat subdomains.txt | httpx -silent -path /phpinfo.php -mc 200 -o phpinfo_exposed.txt
+```
+
+Find Publicly Accessible Wordpress XMLRPC (Brute Force Possible)
+```bash
+cat subdomains.txt | httpx -silent -path /xmlrpc.php -mc 200 -o xmlrpc_open.txt
+```
+
+Detect Open ElasticSearch Instances (Data Exposure)
+```bash
+naabu -list subdomains.txt -p 9200 -silent | httpx -silent -path /_cat/indices?v -mc 200 -o open_elasticsearch.txt
+```
+
+Scan for Open Kubernetes Config (Cluster Info Leak)
+```bash
+cat subdomains.txt | httpx -silent -path /.kube/config -mc 200 -o kube_config_exposed.txt
+```
+
+Find GraphQL Endpoints with Introspection Enabled
+```bash
+cat subdomains.txt | httpx -silent -path /graphql -mc 200 -fr 'Introspection' -o graphql_introspection.txt
+```
+
+Detect Misconfigured CORS (Allow-Origin: )
+```bash
+cat subdomains.txt | httpx -silent -H "Origin: https://evil.com" -fr 'Access-Control-Allow-Origin: \*' -o cors_misconfig.txt
+```
+
+Look for Exposed Adminer (DB Management Tool)
+```bash
+cat subdomains.txt | httpx -silent -path /adminer.php -mc 200 -o adminer_exposed.txt
+```
+
+Detect Open Redis Commander UI (Unauth Control)
+```bash
+cat subdomains.txt | httpx -silent -path /redis/ -mc 200 -o redis_ui_exposed.txt
+```
+
+Find Public GitLab CI/CD Config (Pipeline Disclosure)
+```bash
+cat subdomains.txt | httpx -silent -path /.gitlab-ci.yml -mc 200 -o gitlab_ci_exposed.txt
+```
+
+Scan for Open Debug Mode in Flask Apps
+```bash
+cat subdomains.txt | httpx -silent -path /console -mc 200 -o flask_debug_console.txt
+```
+
+Detect Open Exim/Webmin Panels
+```bash
+cat subdomains.txt | httpx -silent -path-list <(echo -e '/exim\n/webmin') -mc 200 -o open_exim_webmin.txt
+```
+
+Find Exposed Laravel Log Files (App Key Disclosure)
+```bash
+cat subdomains.txt | httpx -silent -path /storage/logs/laravel.log -mc 200 -o laravel_logs_exposed.txt
+```
+
+Detect Public AWS Config Files (Credentials Leak)
+```bash
+cat subdomains.txt | httpx -silent -path /.aws/credentials -mc 200 -o aws_creds_exposed.txt
+```
+
+Identify Open Favicon Files and Fingerprint Services
+```bash
+cat subdomains.txt | httpx -silent -path /favicon.ico -o favicons/ && for icon in favicons/*; do shasum -a 256 $icon; done
+```
+
+Check for Exposed GitHub Workflow Files (.github/workflows)
+```bash
+cat subdomains.txt | httpx -silent -path /.github/workflows/ -mc 200 -o github_workflows_exposed.txt
+```
+
+Find Jenkins Consoles with Anon Access
+```bash
+cat subdomains.txt | httpx -silent -path /script -mc 200 -o jenkins_console.txt
+```
+
+Scan for Default Tomcat Admin Panels
+```bash
+cat subdomains.txt | httpx -silent -path /manager/html -mc 200 -o tomcat_admin_exposed.txt
+```
