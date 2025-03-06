@@ -1,5 +1,5 @@
 <p align="center">
-  #### One Liner Bug Bounty CheatSheet 🚀
+  <h1>  # One Liner Bug Bounty CheatSheet 🚀</h1>
 </p>
 
 ![the](https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExdXk0czF5dmh2MHdiYjJxbThsdnF5bmJnMDEydnN6Z2Nwa2lzMzB6ZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3pzLJifxEvLpe/giphy.gif)
