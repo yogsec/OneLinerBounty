@@ -668,4 +668,76 @@ subfinder -d target.com | httpx -silent -title -tech-detect -ports 80,443,8080,8
 subfinder -d target.com | httpx -silent | nuclei -silent -t takeovers/,redirect/ -o takeover_redirects.txt
 ```
 
+Here are your automated recon and vulnerability scanning commands, tailored for discovering parameters, secrets, misconfigurations, and more:
+
+### Full Parameter Discovery + Automated Fuzzing (XSS, SQLi, LFI, SSRF)
+```bash
+gau target.com | gf xss,lfi,sqli,ssrf | qsreplace FUZZ | ffuf -u FUZZ -w payloads/xss.txt,payloads/lfi.txt,payloads/sqli.txt,payloads/ssrf.txt -fr "FUZZ" | tee param_vulns.txt
+```
+
+### Auto Search for Backup Files + Leaked Configs (All Subdomains)
+```bash
+subfinder -d target.com | httpx -silent -path-list <(curl -s https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/backup.txt) -mc 200 | tee backup_leaks.txt
+```
+
+### Deep Web Archive Scraping + JS Secrets Extraction
+```bash
+gau --subs target.com | grep '\.js$' | httpx -silent -status-code -mc 200 | xargs -I{} bash -c 'curl -s {} | gf secrets' | tee js_secrets.txt
+```
+
+### Auto-Dump All Endpoints from Wayback, JS, Robots.txt, Sitemap.xml
+```bash
+subfinder -d target.com | anew subs.txt && cat subs.txt | httpx -silent -path-list <(echo -e "/robots.txt\n/sitemap.xml") -mc 200 | hakrawler -subs -depth 3 | anew all_urls.txt
+```
+
+### CSP Bypass Finder (Auto Fetch CSP Across All Subdomains)
+```bash
+subfinder -d target.com | httpx -silent -path / -mc 200 -hdrs | grep -i 'content-security-policy' | tee csp_policies.txt
+```
+
+### Automatic SSRF Detection (Using Collaborator/Canarytokens)
+```bash
+gau target.com | gf ssrf | qsreplace 'http://your-collaborator-url.burpcollaborator.net' | httpx -silent
+```
+
+### Deep Search for Hidden Panels + Config Pages (Across All Ports)
+```bash
+subfinder -d target.com | httpx -silent -ports 80,443,8080,8443 | nuclei -silent -t panels/,exposures/configs/ -o exposed_panels.txt
+```
+
+### Entire Subdomain + Tech Stack + CVE + Misconfig Scan (Full Recon Bomb)
+```bash
+subfinder -d target.com | httpx -silent -title -tech-detect -ports 80,443,8080,8443 | nuclei -silent -t cves/,misconfiguration/ -o full_scan.txt
+```
+
+### Auto-Scrape HTML Comments for Sensitive Info
+```bash
+cat all_urls.txt | httpx -silent -mc 200 -fr 'text/html' -body | grep -iE "<!--.*-->" | tee html_comments.txt
+```
+
+### URL Extraction from JS Files (Full Recursive)
+```bash
+cat all_urls.txt | grep '\.js$' | xargs -I{} bash -c 'curl -s {} | grep -Eo "(https?|ftp)://[a-zA-Z0-9./?=_-]*"' | anew extracted_urls.txt
+```
+
+### Super Bruteforce for Backup + Git + Env + SQL Dumps
+```bash
+subfinder -d target.com | httpx -silent -path-list <(echo -e "/.git/\n/.env\n/database.sql\n/backup.zip\n/config.yml") -mc 200 | tee sensitive_files.txt
+```
+
+### Advanced Open Redirect Scanner Across All Params
+```bash
+cat all_urls.txt | gf redirect | qsreplace 'https://evil.com' | httpx -silent -fr 'evil.com' -o open_redirects.txt
+```
+
+### Full Headers Security Misconfig Audit
+```bash
+subfinder -d target.com | httpx -silent -path / -mc 200 -hdrs | nuclei -silent -t misconfiguration/http-headers/ -o header_issues.txt
+```
+
+### Auto-Gather All IPs, ASN, WHOIS for Every Subdomain
+```bash
+subfinder -d target.com | dnsx -a -resp-only | anew all_ips.txt && cat all_ips.txt | xargs -I{} sh -c 'whois {} | grep -iE "OrgName|NetName|CIDR"' | tee whois_lookup.txt
+```
+
 
