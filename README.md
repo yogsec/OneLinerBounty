@@ -8,7 +8,7 @@ This repository is a collection of **concise**, **actionable** bug bounty tips, 
 
 In the world of bug bounty hunting, time is precious. Short, impactful tips can make all the difference. Here, you'll find quick insights that can easily be referenced when you're diving into a new target, testing a feature, or looking to refine your methodology. 🔍
 
---
+---
 
 ## 🌟 Let's Connect!
 
@@ -27,6 +27,6 @@ If you find our work helpful and would like to support us, consider buying us a 
 ☕ **Support Us Here:** [https://buymeacoffee.com/yogsec](https://buymeacoffee.com/yogsec)
 
 
---
+---
 
 
