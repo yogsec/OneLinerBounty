@@ -1,6 +1,6 @@
-<p align="center">
   <h1>  # One Liner Bug Bounty CheatSheet 🚀</h1>
 
+<p align="center">
 
 ![theGIF](https://github.com/yogsec/OneLinerBounty/blob/main/cheatbug.gif?raw=true)
 
