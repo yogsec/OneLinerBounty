@@ -668,8 +668,6 @@ subfinder -d target.com | httpx -silent -title -tech-detect -ports 80,443,8080,8
 subfinder -d target.com | httpx -silent | nuclei -silent -t takeovers/,redirect/ -o takeover_redirects.txt
 ```
 
-Here are your automated recon and vulnerability scanning commands, tailored for discovering parameters, secrets, misconfigurations, and more:
-
 ### Full Parameter Discovery + Automated Fuzzing (XSS, SQLi, LFI, SSRF)
 ```bash
 gau target.com | gf xss,lfi,sqli,ssrf | qsreplace FUZZ | ffuf -u FUZZ -w payloads/xss.txt,payloads/lfi.txt,payloads/sqli.txt,payloads/ssrf.txt -fr "FUZZ" | tee param_vulns.txt
