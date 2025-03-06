@@ -1,9 +1,10 @@
 <p align="center">
   <h1>  # One Liner Bug Bounty CheatSheet 🚀</h1>
-</p>
+
 
 ![theGIF](https://github.com/yogsec/OneLinerBounty/blob/main/cheatbug.gif?raw=true)
 
+</p>
 This repository is a collection of **concise**, **actionable** bug bounty tips, each carefully crafted into a single line. Whether you're just getting started or you're a seasoned bug hunter, these tips will help you level up your skills, save time, and uncover more vulnerabilities. 💡
 
 ## Why OneLiners?
