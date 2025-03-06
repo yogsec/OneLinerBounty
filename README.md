@@ -2197,3 +2197,104 @@ Look for Exposed Jenkins Build Logs
 ```bash
 cat subdomains.txt | httpx -silent -path /job/test/lastBuild/consoleText -mc 200 -o jenkins_build_logs.txt
 ```
+Here is the converted content:
+
+Find Open Adminer DB Management Tools
+```bash
+cat subdomains.txt | httpx -silent -path /adminer.php -mc 200 -o adminer_exposed.txt
+```
+
+Detect Exposed SVN Directories
+```bash
+cat subdomains.txt | httpx -silent -path /.svn/entries -mc 200 -o svn_exposed.txt
+```
+
+Detect Exposed .git Repos (Source Code Leak)
+```bash
+cat subdomains.txt | httpx -silent -path /.git/config -mc 200 -o git_exposed.txt
+```
+
+Find Sensitive Files using common patterns (env, db creds, ssh keys)
+```bash
+cat subdomains.txt | httpx -silent -path-list <(echo -e '/.env\n/database.yml\n/id_rsa\n/config.php\n/secrets.yml') -mc 200 -o sensitive_files.txt
+```
+
+Detect Exposed Docker and Kubernetes Dashboard
+```bash
+cat subdomains.txt | httpx -silent -path-list <(echo -e '/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy\n/docker') -mc 200 -o kube_docker_exposed.txt
+```
+
+Scan for Exposed Environment Variables in Responses
+```bash
+cat subdomains.txt | httpx -silent -fr 'AWS_ACCESS_KEY_ID|SECRET_KEY|DB_PASSWORD' -o secrets_in_response.txt
+```
+
+Find Public Swagger API Documentation (API Discovery)
+```bash
+cat subdomains.txt | httpx -silent -path /swagger.json -mc 200 -o swagger_exposed.txt
+```
+
+Check for Exposed Server-Status Pages (Apache/Nginx Debug Info)
+```bash
+cat subdomains.txt | httpx -silent -path /server-status -mc 200 -o server_status_exposed.txt
+```
+
+Scan for Open Redis, Memcached, MongoDB Ports (Unauth Access)
+```bash
+naabu -list subdomains.txt -ports 6379,11211,27017 -silent -o open_db_ports.txt
+```
+
+Identify Publicly Accessible .DS_Store (File Disclosure)
+```bash
+cat subdomains.txt | httpx -silent -path /.DS_Store -mc 200 -o ds_store_exposed.txt
+```
+
+Find Exposed Wordpress Debug Log (Sensitive Info)
+```bash
+cat subdomains.txt | httpx -silent -path /wp-content/debug.log -mc 200 -o wp_debug_log.txt
+```
+
+Check for Exposed Internal IP in Responses (SSR Leak)
+```bash
+cat subdomains.txt | httpx -silent -fr '10\.|192\.168\.|172\.' -o internal_ip_leak.txt
+```
+
+Find Laravel Env Leak via Incorrect Env Handler
+```bash
+cat subdomains.txt | httpx -silent -path /.env -mc 200 -o laravel_env_leak.txt
+```
+
+Scan for Exposed Backup Folders
+```bash
+cat subdomains.txt | httpx -silent -path /backup -mc 200 -o backup_folder_exposed.txt
+```
+
+Look for Open Joomla Installers
+```bash
+cat subdomains.txt | httpx -silent -path /installation/index.php -mc 200 -o joomla_installer.txt
+```
+
+Detect Exposed Debug Pages (debug=true)
+```bash
+cat subdomains.txt | httpx -silent -fr 'debug=true' -o debug_pages.txt
+```
+
+Find Open Jira Dashboards
+```bash
+cat subdomains.txt | httpx -silent -path /secure/Dashboard.jspa -mc 200 -o jira_open.txt
+```
+
+Scan for Exposed Backup Files (config.old, index.bak)
+```bash
+cat subdomains.txt | httpx -silent -path-list <(echo -e '/config.old\n/index.bak\n/wp-config.php.save') -mc 200 -o backup_leaks.txt
+```
+
+Detect Open Admin Portals (Common Paths)
+```bash
+cat subdomains.txt | httpx -silent -path-list <(echo -e '/admin\n/login\n/dashboard\n/console') -mc 200 -o open_admin_portals.txt
+```
+
+Find Exposed Debug Toolbar (Django Debug)
+```bash
+cat subdomains.txt | httpx -silent -path /__debug__/ -mc 200 -o django_debug_toolbar.txt
+```
