@@ -29,71 +29,65 @@ If you find our work helpful and would like to support us, consider buying us a 
 
 ---
 
-
-Got it! Here's the `README.md` file with just the content you shared:
-
-```markdown
 # OneLinerBounty
 
 ## Quick Bug Bounty Tips
 
 Here are some essential one-liners for various bug bounty tasks:
 
-### 1. Misconfigurations, Tech Detection, and Common Bugs
+### Misconfigurations, Tech Detection, and Common Bugs
 If you want wider coverage, like misconfigurations, tech detection, and common bugs, change the template path to `-t vulnerabilities/`:
 
 ```bash
 cat urls.txt | httpx -silent -mc 200 | nuclei -silent -t vulnerabilities/ -o results.txt
 ```
 
-### 2. Subdomain Takeovers - Quick Check
+### Subdomain Takeovers - Quick Check
 Want to check for subdomain takeovers in one line?
 
 ```bash
 subfinder -d example.com | httpx -silent | nuclei -silent -t takeovers/ -o takeover.txt
 ```
 
-### 3. Subdomain Discovery + Live Check
+### Subdomain Discovery + Live Check
 For subdomain discovery with live check:
 
 ```bash
 subfinder -d target.com | httpx -silent -mc 200
 ```
 
-### 4. Subdomain Takeover Detection
+### Subdomain Takeover Detection
 Detect subdomain takeovers:
 
 ```bash
 subfinder -d target.com | httpx -silent | nuclei -silent -t takeovers/
 ```
 
-### 5. Directory Bruteforce (Content Discovery)
+### Directory Bruteforce (Content Discovery)
 For directory bruteforce:
 
 ```bash
 ffuf -u https://target.com/FUZZ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -mc 200
 ```
 
-### 6. Find Open Redirects (Quick Scan)
+### Find Open Redirects (Quick Scan)
 To quickly find open redirects:
 
 ```bash
 cat urls.txt | gf redirect | httpx -silent
 ```
 
-### 7. XSS Detection (Using Dalfox)
+### XSS Detection (Using Dalfox)
 For XSS detection using Dalfox:
 
 ```bash
 cat urls.txt | dalfox pipe --skip-bav --only-poc
 ```
 
-### 8. SQL Injection Discovery
+### SQL Injection Discovery
 For SQL Injection discovery:
 
 ```bash
 cat urls.txt | gf sqli | sqlmap --batch --random-agent -m -
 ```
-```
 
-You can add more content as you go. Let me know whenever you're ready for the next part!
