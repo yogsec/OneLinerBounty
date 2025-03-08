@@ -1,6 +1,6 @@
   <h1>  # One Liner Bug Bounty CheatSheet 🚀</h1>
 
-![theGIF]([https://giphy.com/gifs/funny-lol-college-6xE1FNcorRInS](https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExN2ZtZDI4eGJ1dmFmbWx0ZGRqNmRiMWNkcHBydTc1cWJqOXRheHp0eCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/6xE1FNcorRInS/giphy.gif)
+![https://giphy.com/gifs/funny-lol-college-6xE1FNcorRInS](https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExN2ZtZDI4eGJ1dmFmbWx0ZGRqNmRiMWNkcHBydTc1cWJqOXRheHp0eCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/6xE1FNcorRInS/giphy.gif)
 
 This repository is a collection of concise, actionable bug bounty tips, each carefully crafted into a single line. Whether you're just getting started or you're a seasoned bug hunter, these tips will help you level up your skills, save time, and uncover more vulnerabilities. 💡
 
