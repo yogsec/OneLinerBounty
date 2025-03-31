@@ -21,10 +21,6 @@ In the world of bug bounty hunting, time is precious. Short, impactful tips can 
 
 ---
 
-# OneLinerBounty
-
-## Quick Bug Bounty Tips
-
 ### Misconfigurations, Tech Detection, and Common Bugs
 If you want wider coverage, like misconfigurations, tech detection, and common bugs, change the template path to `-t vulnerabilities/`:
 
