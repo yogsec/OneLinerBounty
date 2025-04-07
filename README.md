@@ -1,6 +1,8 @@
   <h1>  # One Liner Bug Bounty CheatSheet</h1>
 <div style="align:center;">
+  
 ![https://giphy.com/gifs/funny-lol-college-6xE1FNcorRInS](https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExN2ZtZDI4eGJ1dmFmbWx0ZGRqNmRiMWNkcHBydTc1cWJqOXRheHp0eCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/6xE1FNcorRInS/giphy.gif)
+
 </div>
 
 
